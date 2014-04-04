@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true" >
+
+    <TextView
+        android:id="@+id/txtRowUser"
+        style="@style/CellText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:text="Medium Text" />
+
+    <TextView
+        android:id="@+id/txtRowPgto"
+        style="@style/CellText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:clickable="true"
+        android:gravity="right"
+        android:text="Text"
+        android:textColor="#00D0A0" />
+
+    <TextView
+        android:id="@+id/txtRowSaldo"
+        style="@style/CellText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:gravity="right"
+        android:text="Text" />
+
+</TableRow>

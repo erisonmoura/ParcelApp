@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.parcelinc.parcelapp"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="10"
+        android:targetSdkVersion="19" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.parcelinc.parcelapp.activity.SelecaoConta"
+            android:label="@string/title_selecionar_conta" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.parcelinc.parcelapp.activity.ManterConta"
+            android:label="@string/title_manter_conta" >
+        </activity>
+        <activity
+            android:name="com.parcelinc.parcelapp.activity.ManterUser"
+            android:label="@string/title_manter_user" >
+        </activity>
+        <activity
+            android:name="com.parcelinc.parcelapp.activity.OperacaoConta"
+            android:label="@string/title_operacao_conta" >
+        </activity>
+        <activity
+            android:name="com.parcelinc.parcelapp.activity.ListarDespesa"
+            android:label="@string/title_listar_despesa" >
+        </activity>
+        <activity
+            android:name="com.parcelinc.parcelapp.activity.RelatorioFechamento"
+            android:label="@string/title_relatorio_fechamento" >
+        </activity>
+    </application>
+
+</manifest>

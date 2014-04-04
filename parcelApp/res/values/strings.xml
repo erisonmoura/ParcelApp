@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">parcelApp</string>
+    <string name="title_selecionar_conta">Selecionar Conta</string>
+    <string name="title_manter_conta">Manter Conta</string>
+    <string name="title_operacao_conta">Registro de Conta</string>
+    <string name="title_manter_user">Manter Usário</string>
+    <string name="title_listar_despesa">Listar Despesas</string>
+    <string name="title_relatorio_fechamento">Relatório de Fechamento</string>
+    
+    <string name="btn_novo_user">Novo Usuário</string>
+    <string name="btn_nova_conta">Nova Conta</string>
+	<string name="btn_nova_despesa">Nova Despesa</string>
+    
+    <string name="btn_salvar">Salvar</string>
+    <string name="btn_despesas">Despesas</string>
+    <string name="btn_fechamento">Fechamento</string>
+    
+    <string name="mnu_alterar">Alterar</string>
+    <string name="mnu_alterar_nome">Alterar Nome</string>
+    <string name="mnu_alterar_parcela">Alterar Parcela</string>
+    <string name="mnu_excluir_despesa">Excluir Despesa</string>
+
+    <string name="lbl_conta">Conta</string>
+    <string name="lbl_nome">Nome</string>
+    <string name="lbl_obs">Observações</string>
+    <string name="lbl_filtro">Filtrar</string>
+
+    <string name="lbl_fechamento">Fechamento em %s</string>
+    <string name="lbl_user">Usuário</string>
+    <string name="lbl_pagamentos">Pgtos</string>
+    <string name="lbl_saldo">Saldo</string>
+    
+    <string name="lbl_despesa_conta">Despesas de %s</string>
+    <string name="lbl_despesa">Despesa</string>
+    <string name="lbl_valor">Valor</string>
+    <string name="lbl_quant">Qntd</string>
+    
+    <string name="lbl_recorr">Recorrente</string>
+    <string name="lbl_quantidade">Quantidade</string>
+    <string name="lbl_pagador">Usuário Pagador</string>
+    <string name="lbl_data_pagamento">Data%s Pagamento</string>
+    <string name="lbl_data">Data</string>
+    <string name="lbl_ref">Referência</string>
+    <string name="lbl_saldos">Saldos</string>
+
+</resources>
