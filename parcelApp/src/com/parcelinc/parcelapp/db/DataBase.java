@@ -6,6 +6,8 @@ public interface DataBase<T> {
 
 	public long insert(T object);
 
+	public long update(T object);
+
 	public void remove(String nome);
 	
 	public List<T> getList();

@@ -6,13 +6,16 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.parcelinc.parcelapp.R;
+import com.parcelinc.parcelapp.db.UsuarioDataBase;
+import com.parcelinc.parcelapp.pojo.Usuario;
 
 public class ManterUser extends Activity {
 
 	EditText edtNome;
 	EditText edtObs;
 
-	Object usuario;
+	Usuario usuario;
+	UsuarioDataBase db; 
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,11 +31,15 @@ public class ManterUser extends Activity {
 	}
 
 	public void salvarUsuario(View view) {
+		String nome = edtNome.getText().toString();
+		String obs = edtObs.getText().toString();
 		if (usuario == null) {
-			usuario = new Object();
-			// TODO SALVAR USUARIO
+			usuario = new Usuario(nome, obs);
+			db.insert(usuario);
 		} else {
-			// TODO ALTERAR USUARIO
+			usuario.setNome(nome);
+			usuario.setObs(obs);
+			db.update(usuario);
 		}
 		
 		setResult(RESULT_FIRST_USER);
