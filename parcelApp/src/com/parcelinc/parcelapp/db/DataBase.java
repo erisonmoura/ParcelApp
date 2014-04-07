@@ -12,5 +12,5 @@ public interface DataBase<T> {
 	
 	public List<T> getList();
 	
-	public List<T> getList(String data1, String data2);
+	
 }

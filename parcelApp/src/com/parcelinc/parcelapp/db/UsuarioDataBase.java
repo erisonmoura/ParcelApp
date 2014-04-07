@@ -129,9 +129,5 @@ public class UsuarioDataBase implements DataBase<Usuario> {
 		return new Usuario(id, nome, obs);
 	}
 
-	@Override
-	public List<Usuario> getList(String data1, String data2) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 }
