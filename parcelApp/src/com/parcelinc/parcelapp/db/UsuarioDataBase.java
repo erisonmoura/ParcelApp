@@ -59,7 +59,8 @@ public class UsuarioDataBase implements DataBase<Usuario>{
 
 	@Override
 	public long update(Usuario object) {
-		// TODO Auto-generated method stub		
+		// TODO Auto-generated method stub
+		//
 		return 0;
 	}
 	
