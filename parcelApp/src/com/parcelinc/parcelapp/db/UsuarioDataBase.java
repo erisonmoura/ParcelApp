@@ -27,7 +27,7 @@ public class UsuarioDataBase implements DataBase<Usuario> {
 	 *            Context
 	 * @return The UserDataBase instance.
 	 */
-	public static DataBase<Usuario> getInstance(Context ctx) {
+	public static UsuarioDataBase getInstance(Context ctx) {
 		if (instance.db == null || !instance.db.isOpen()) {
 			instance.db = new DBHelper(ctx).getWritableDatabase();
 		}
@@ -47,6 +47,7 @@ public class UsuarioDataBase implements DataBase<Usuario> {
 			db.beginTransaction();
 			retValue = db.insert(DBHelper.TBL_USUARIOS, null, cv);
 			if (retValue != -1) {
+				usuario.setId(Long.valueOf(retValue));
 				db.setTransactionSuccessful();
 			}
 		} finally {
@@ -60,8 +61,7 @@ public class UsuarioDataBase implements DataBase<Usuario> {
 		long retValue = -1;
 
 		ContentValues values = new ContentValues();
-		values.put(DBHelper.DATABASE_NAME_FIELD, usuario.getNome());
-		values.put(DBHelper.DATABASE_OBS_FIELD, usuario.getObs());
+		values.put(DBHelper.DATABASE_ID_FIELD, usuario.getId());
 
 		try {
 			db.beginTransaction();
@@ -90,6 +90,25 @@ public class UsuarioDataBase implements DataBase<Usuario> {
 			db.endTransaction();
 		}
 
+	}
+	
+	@Override
+	public Usuario get(long id) {
+		Usuario usuario = null;
+		String[] columns = new String[] { DBHelper.DATABASE_ID_FIELD,
+				DBHelper.DATABASE_NAME_FIELD };
+
+		Cursor c = db.query(DBHelper.TBL_USUARIOS, columns,
+				DBHelper.DATABASE_ID_FIELD + "=?",
+				new String[] { String.format("%d", id) }, null, null,
+				DBHelper.DATABASE_DATE_FIELD);
+
+		c.moveToFirst();
+		if (!c.isAfterLast()) {
+			usuario = fillUsuario(c);
+		}
+
+		return usuario;
 	}
 
 	public List<Usuario> getList() {

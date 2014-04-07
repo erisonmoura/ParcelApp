@@ -14,6 +14,7 @@
 	<string name="btn_nova_despesa">Nova Despesa</string>
     
     <string name="btn_salvar">Salvar</string>
+    <string name="btn_selecionar">Selecionar</string>
     <string name="btn_despesas">Despesas</string>
     <string name="btn_fechamento">Fechamento</string>
     

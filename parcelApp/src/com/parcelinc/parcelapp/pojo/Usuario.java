@@ -9,40 +9,47 @@ public class Usuario implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private long id;
-	
-	private  String nome;
+	private Long id;
+	private String nome;
 	private String obs;
-	
-	
-	public Usuario(String nome, String obs) {
-		super();
-		this.nome = nome;
-		this.obs = obs;
-	}
-	public Usuario(long id, String nome, String obs) {
+
+	public Usuario(Long id, String nome, String obs) {
 		super();
 		this.id = id;
 		this.nome = nome;
 		this.obs = obs;
 	}
-	public long getId() {
+
+	public Usuario(Long id) {
+		this(id, null, null);
+	}
+
+	public Usuario(String nome, String obs) {
+		this(null, nome, obs);
+	}
+
+	public Long getId() {
 		return id;
 	}
-	public void setId(long id) {
+
+	public void setId(Long id) {
 		this.id = id;
 	}
+
 	public String getNome() {
 		return nome;
 	}
+
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
+
 	public String getObs() {
 		return obs;
 	}
+
 	public void setObs(String obs) {
 		this.obs = obs;
 	}
-		
+
 }

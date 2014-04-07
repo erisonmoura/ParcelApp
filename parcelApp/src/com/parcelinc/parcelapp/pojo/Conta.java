@@ -1,11 +1,12 @@
-package com.parcelinc.parcelapp.pojo;
-
-
+package 	com.parcelinc.parcelapp.pojo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Conta implements Serializable {
+
 	/**
 	 * 
 	 */
@@ -13,13 +14,13 @@ public class Conta implements Serializable {
 
 	private Long id;
 	private String nome;
-	private List<Usuario> usuarios;
+	private List<Usuario> usuarios = new ArrayList<Usuario>(0);
 
 	public Conta(Long id, String nome, List<Usuario> usuarios) {
 		super();
 		this.id = id;
 		this.nome = nome;
-		this.usuarios = usuarios;
+		setUsuarios(usuarios);
 	}
 
 	public Conta(String nome, List<Usuario> usuarios) {
@@ -43,11 +44,20 @@ public class Conta implements Serializable {
 	}
 
 	public List<Usuario> getUsuarios() {
-		return usuarios;
+		return Collections.unmodifiableList(usuarios);
 	}
 
 	public void setUsuarios(List<Usuario> usuarios) {
-		this.usuarios = usuarios;
+		this.usuarios.clear();
+		addAllUsuario(usuarios);
+	}
+	
+	public boolean addAllUsuario(List<Usuario> usuarios) {
+		return (usuarios != null) ? this.usuarios.addAll(usuarios) : true;
+	}
+	
+	public boolean addUsuario(Usuario usuario) {
+		return this.usuarios.add(usuario);
 	}
 
 }

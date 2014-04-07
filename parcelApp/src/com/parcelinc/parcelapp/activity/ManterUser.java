@@ -1,6 +1,7 @@
 package com.parcelinc.parcelapp.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -15,22 +16,28 @@ public class ManterUser extends Activity {
 	EditText edtObs;
 
 	Usuario usuario;
-	UsuarioDataBase db; 
+	UsuarioDataBase db;
+	
+	Context contexto;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.user_manter);
 		
+		contexto = this;
+
 		edtNome = (EditText) findViewById(R.id.edtUsuario);
 		edtObs = (EditText) findViewById(R.id.edtObservacao);
 		
 		if (usuario != null) {
-			
+			edtNome.setText(usuario.getNome());
+			edtObs.setText(usuario.getObs());
 		}
 	}
 
 	public void salvarUsuario(View view) {
+		db = UsuarioDataBase.getInstance(contexto);
 		String nome = edtNome.getText().toString();
 		String obs = edtObs.getText().toString();
 		if (usuario == null) {
@@ -41,8 +48,9 @@ public class ManterUser extends Activity {
 			usuario.setObs(obs);
 			db.update(usuario);
 		}
-		
+
 		setResult(RESULT_FIRST_USER);
+		finish();
 	}
 
 }

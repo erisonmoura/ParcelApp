@@ -9,8 +9,9 @@ public interface DataBase<T> {
 	public long update(T object);
 
 	public void remove(T object);
-	
+
 	public List<T> getList();
-	
-	
+
+	public T get(long id);
+
 }
