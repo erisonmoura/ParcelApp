@@ -8,7 +8,7 @@ public interface DataBase<T> {
 
 	public long update(T object);
 
-	public void remove(String nome);
+	public void remove(T object);
 	
 	public List<T> getList();
 	
