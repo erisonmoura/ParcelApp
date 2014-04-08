@@ -80,7 +80,7 @@ public class ContaDatabase implements DataBase<Conta> {
 		long retValue = -1;
 
 		ContentValues values = new ContentValues();
-		values.put(DBHelper.DATABASE_ID_FIELD, conta.getNome());
+		values.put(DBHelper.DATABASE_NAME_FIELD, conta.getNome());
 
 		try {
 			db.beginTransaction();
