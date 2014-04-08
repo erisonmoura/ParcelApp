@@ -21,7 +21,7 @@ public class ContaDatabase implements DataBase<Conta> {
 
 	private SQLiteDatabase db;
 
-	public ContaDatabase() {
+	private ContaDatabase() {
 		// Do nothing
 	}
 
@@ -74,13 +74,13 @@ public class ContaDatabase implements DataBase<Conta> {
 
 		return retValue;
 	}
-
+//TODO implementar update do relacionamento contas-usuarios
 	@Override
 	public long update(Conta conta) {
 		long retValue = -1;
 
 		ContentValues values = new ContentValues();
-		values.put(DBHelper.DATABASE_ID_FIELD, conta.getNome());
+		values.put(DBHelper.DATABASE_ID_FIELD, conta.getId());
 
 		try {
 			db.beginTransaction();
@@ -118,8 +118,7 @@ public class ContaDatabase implements DataBase<Conta> {
 
 		Cursor c = db.query(DBHelper.TBL_CONTAS, columns,
 				DBHelper.DATABASE_ID_FIELD + "=?",
-				new String[] { String.format("%d", id) }, null, null,
-				DBHelper.DATABASE_DATE_FIELD);
+				new String[] { String.format("%d", id) }, null, null, null);
 
 		c.moveToFirst();
 		if (!c.isAfterLast()) {

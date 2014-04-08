@@ -1,6 +1,5 @@
 package com.parcelinc.parcelapp.activity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -10,10 +9,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.parcelinc.parcelapp.R;
+import com.parcelinc.parcelapp.db.ContaDatabase;
 import com.parcelinc.parcelapp.pojo.Conta;
 
 public class SelecaoConta extends Activity {
@@ -24,6 +25,8 @@ public class SelecaoConta extends Activity {
 	
 	private Context contexto;
 	private ListView listaContas;
+	
+	private List<Conta> lista;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,23 @@ public class SelecaoConta extends Activity {
 				return false;
 			}
 
+		});
+		
+		listaContas.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				Conta conta = lista.get(position);
+				selecionarConta(conta);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				// TODO Auto-generated method stub
+				
+			}
+			
 		});
 
 		List<Conta> lista = listarContas();
@@ -77,31 +97,48 @@ public class SelecaoConta extends Activity {
 		novaConta(OPR_USER);
 	}
 	
+	public void alterarConta(View view) {
+		novaConta(OPR_ALT, contaSelecionada());
+	}
+	
 	public void selecionarConta(View view) {
-		Object item = listaContas.getSelectedItem();
+		selecionarConta(contaSelecionada());
+	}
 
+	private void selecionarConta(Conta item) {
 		Intent it = new Intent(contexto, OperacaoConta.class);
-		// FIXME Preparar e passar a Conta selecionada
+		it.putExtra(OperacaoConta.PARAM_CONTA, item);
 
 		startActivity(it);
 	}
+
+	private Conta contaSelecionada() {
+		Conta item = (Conta) listaContas.getSelectedItem();
+		return item;
+	}
 	
 	private void carregarContas(List<Conta> lista) {
-		
+		this.lista = lista;
 		ArrayAdapter<Conta> adapter = new ArrayAdapter<Conta>(contexto,
 				android.R.layout.simple_list_item_single_choice, lista);
 		
 		listaContas.setAdapter(adapter);
 	}
 	
-	private void novaConta(int operacao) {
+	private void novaConta(int operacao, Conta conta) {
 		Intent it = new Intent(contexto, ManterConta.class);
+		if (conta != null) {
+			it.putExtra(ManterConta.PARAM_CONTA, conta);
+		}
 		startActivityForResult(it, operacao);
+	}
+
+	private void novaConta(int operacao) {
+		novaConta(operacao, null);
 	}
 	
 	private List<Conta> listarContas() {
-		//TODO Realizar consulta ao banco
-		return new ArrayList<Conta>(0);
+		return ContaDatabase.getInstance(contexto).getList();
 	}
 
 }

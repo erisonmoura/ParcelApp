@@ -59,5 +59,9 @@ public class Conta implements Serializable {
 	public boolean addUsuario(Usuario usuario) {
 		return this.usuarios.add(usuario);
 	}
+	
+	public boolean removeUsuario(Usuario usuario) {
+		return this.usuarios.remove(usuario);
+	}
 
 }

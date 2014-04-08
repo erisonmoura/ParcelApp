@@ -12,6 +12,8 @@ import com.parcelinc.parcelapp.pojo.Usuario;
 
 public class ManterUser extends Activity {
 
+	public static final String PARAM_USER = "usuario";
+
 	EditText edtNome;
 	EditText edtObs;
 

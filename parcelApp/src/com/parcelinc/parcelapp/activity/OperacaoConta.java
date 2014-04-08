@@ -9,12 +9,17 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.parcelinc.parcelapp.R;
 
 public class OperacaoConta extends Activity {
 
+	public static final String PARAM_CONTA = "conta";
+	
 	Date dataFiltro;
+
+	TextView txtConta;
 
 	Spinner spnMes;
 	EditText edtAno;
@@ -24,6 +29,8 @@ public class OperacaoConta extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.conta_operacao);
 
+		txtConta = (TextView) findViewById(R.id.txtNomeConta);
+		
 		Calendar cal = Calendar.getInstance();
 		cal.clear(Calendar.HOUR_OF_DAY);
 		cal.clear(Calendar.MINUTE);
@@ -42,6 +49,7 @@ public class OperacaoConta extends Activity {
 
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item, listaNomesMeses());
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spnMes.setAdapter(adapter);
 		
 		spnMes.setSelection(mes);
