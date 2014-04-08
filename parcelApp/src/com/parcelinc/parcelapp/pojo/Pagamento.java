@@ -1,16 +1,15 @@
 package com.parcelinc.parcelapp.pojo;
 
-import java.util.Date;
 
 public class Pagamento {
 
 	private Long id;
 	private Despesa despesa;
-	private Date data;
+	private String data;
 	private Usuario usuario;
 	private double valor;
 
-	public Pagamento(Long id, Despesa despesa, Date data, Usuario usuario,
+	public Pagamento(Long id, Despesa despesa, String data, Usuario usuario,
 			double valor) {
 		super();
 		this.id = id;
@@ -20,8 +19,15 @@ public class Pagamento {
 		this.valor = valor;
 	}
 
-	public Pagamento(Despesa despesa, Date data, Usuario usuario, double valor) {
+	public Pagamento(Despesa despesa, String data, Usuario usuario, double valor) {
 		this(null, despesa, data, usuario, valor);
+	}
+	public Pagamento(Long id){
+		this(id, null, null, null, 0);
+		
+	}
+	public Pagamento(String data, double valor){
+		this(null, null, data, null, valor);
 	}
 
 	public Long getId() {
@@ -40,11 +46,11 @@ public class Pagamento {
 		this.despesa = despesa;
 	}
 
-	public Date getData() {
+	public String getData() {
 		return data;
 	}
 
-	public void setData(Date data) {
+	public void setData(String data) {
 		this.data = data;
 	}
 
