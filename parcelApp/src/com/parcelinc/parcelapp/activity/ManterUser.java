@@ -2,6 +2,7 @@ package com.parcelinc.parcelapp.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -31,10 +32,14 @@ public class ManterUser extends Activity {
 
 		edtNome = (EditText) findViewById(R.id.edtUsuario);
 		edtObs = (EditText) findViewById(R.id.edtObservacao);
-		
-		if (usuario != null) {
-			edtNome.setText(usuario.getNome());
-			edtObs.setText(usuario.getObs());
+
+		Intent it = getIntent();
+		if (it.hasExtra(PARAM_USER)) {
+			usuario = (Usuario) it.getSerializableExtra(PARAM_USER);
+			if (usuario != null) {
+				edtNome.setText(usuario.getNome());
+				edtObs.setText(usuario.getObs());
+			}
 		}
 	}
 

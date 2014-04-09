@@ -1,4 +1,4 @@
-package 	com.parcelinc.parcelapp.pojo;
+package com.parcelinc.parcelapp.pojo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,6 +27,14 @@ public class Conta implements Serializable {
 		this(null, nome, usuarios);
 	}
 
+	public Conta(Long id) {
+		this(id, null, null);
+	}
+
+	public Conta(String nome) {
+		this(null, nome, null);
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -51,11 +59,11 @@ public class Conta implements Serializable {
 		this.usuarios.clear();
 		addAllUsuario(usuarios);
 	}
-	
+
 	public boolean addAllUsuario(List<Usuario> usuarios) {
 		return (usuarios != null) ? this.usuarios.addAll(usuarios) : true;
 	}
-	
+
 	public boolean addUsuario(Usuario usuario) {
 		return this.usuarios.add(usuario);
 	}

@@ -117,7 +117,7 @@ public class UsuarioDataBase implements DataBase<Usuario> {
 				DBHelper.DATABASE_NAME_FIELD };
 
 		Cursor c = db.query(DBHelper.TBL_USUARIOS, columns, null, null, null,
-				null, DBHelper.DATABASE_DATE_FIELD);
+				null, DBHelper.DATABASE_NAME_FIELD);
 
 		c.moveToFirst();
 		while (!c.isAfterLast()) {

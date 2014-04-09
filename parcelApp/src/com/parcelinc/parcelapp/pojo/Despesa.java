@@ -1,8 +1,8 @@
 package com.parcelinc.parcelapp.pojo;
 
-
-
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Despesa implements Serializable {
@@ -14,14 +14,14 @@ public class Despesa implements Serializable {
 	private Long id;
 	private String nome;
 	private Conta conta;
-	private List<Pagamento> pagamentos;
+	private List<Pagamento> pagamentos = new ArrayList<Pagamento>(0);
 
 	public Despesa(Long id, String nome, Conta conta, List<Pagamento> pagamentos) {
 		super();
 		this.id = id;
 		this.nome = nome;
 		this.conta = conta;
-		this.pagamentos = pagamentos;
+		setPagamentos(pagamentos);
 	}
 
 	public Despesa(String nome, Conta conta, List<Pagamento> pagamentos) {
@@ -54,11 +54,20 @@ public class Despesa implements Serializable {
 	}
 
 	public List<Pagamento> getPagamentos() {
-		return pagamentos;
+		return Collections.unmodifiableList(pagamentos);
 	}
 
 	public void setPagamentos(List<Pagamento> pagamentos) {
-		this.pagamentos = pagamentos;
+		this.pagamentos.clear();
+		addAllPagamento(pagamentos);
+	}
+
+	public boolean addAllPagamento(List<Pagamento> pagamentos) {
+		return (pagamentos != null) ? this.pagamentos.addAll(pagamentos) : true;
+	}
+
+	public boolean addPagamento(Pagamento pagamento) {
+		return this.pagamentos.add(pagamento);
 	}
 
 }
