@@ -26,11 +26,11 @@ public class PagamentoDataBase implements DataBase<Pagamento> {
 	}
 
 	/**
-	 * Get ContaDataBase instance
+	 * Get PagamentoDataBase instance
 	 * 
 	 * @param ctx
 	 *            Context
-	 * @return The ContaDataBase instance.
+	 * @return The PagamentoDataBase instance.
 	 */
 	public static PagamentoDataBase getInstance(Context ctx) {
 		if (instance.db == null || !instance.db.isOpen()) {
