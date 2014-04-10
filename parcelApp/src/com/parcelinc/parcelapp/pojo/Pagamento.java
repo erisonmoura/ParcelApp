@@ -3,6 +3,8 @@ package com.parcelinc.parcelapp.pojo;
 
 public class Pagamento {
 
+	// TODO Voltar a ser Objetos: Despesa e Usuario
+	
 	private Long id;
 	private Long idDespesa;
 	private String data;

@@ -133,6 +133,16 @@ public class PagamentoDataBase implements DataBase<Pagamento> {
 		return list;
 	}	
 
+	public List<Pagamento> getList(Long idDespesa, String filtroMes, Long idUsuario) {
+		filtroMes = filtroMes + DateUtil.SEPARATOR;
+
+		/* TODO Cada parâmetro pode ser opcional
+		 * Deve ordenar por: Data, Nome da Despesa, e Nome do Usuário 
+		 */
+		return null;
+	}
+	
+	// TODO Preparar para povoar os Objetos Usuário e Despesa
 	private Pagamento fillPagamento(Cursor c) {
 		Long id = c.getLong(0);
 		Long idDespesa = c.getLong(1);
