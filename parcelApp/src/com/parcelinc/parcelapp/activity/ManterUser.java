@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.parcelinc.parcelapp.R;
 import com.parcelinc.parcelapp.db.UsuarioDataBase;
@@ -58,7 +57,8 @@ public class ManterUser extends Activity {
 		}
 
 		setResult(RESULT_FIRST_USER);
-		Toast.makeText(contexto, R.string.msg_salvo_sucesso, Toast.LENGTH_LONG).show();
+		finish();
+		//Toast.makeText(contexto, R.string.msg_salvo_sucesso, Toast.LENGTH_LONG).show();
 	}
 
 }

@@ -42,7 +42,7 @@ public class ManterConta extends Activity {
 	private UsuarioDataBase dbUser;
 	private ContaDatabase dbConta;
 	
-	private List<Usuario> usuariosConta;
+	private List<Long> idsUsuarioConta;
 
 	private EditText edtNome;
 	private LinearLayout layoutItens;
@@ -52,9 +52,9 @@ public class ManterConta extends Activity {
 		@Override
 		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			if (isChecked) {
-				usuariosConta.add((Usuario) buttonView.getTag()); 
+				idsUsuarioConta.add((Long) buttonView.getTag()); 
 			} else {
-				usuariosConta.remove((Usuario) buttonView.getTag());
+				idsUsuarioConta.remove((Long) buttonView.getTag());
 			}
 		}
 	}
@@ -100,12 +100,12 @@ public class ManterConta extends Activity {
 
 		Intent it = getIntent();
 
-		usuariosConta = new ArrayList<Usuario>();
+		idsUsuarioConta = new ArrayList<Long>();
 		if (it.hasExtra(PARAM_CONTA)) {
 			conta = (Conta) it.getSerializableExtra(PARAM_CONTA);
 			if (conta != null) {
 				edtNome.setText(conta.getNome());
-				usuariosConta = new ArrayList<Usuario>(conta.getUsuarios());
+				idsUsuarioConta = new ArrayList<Long>(conta.getIdsUsuario());
 			}
 		}
 
@@ -180,8 +180,8 @@ public class ManterConta extends Activity {
 	        txtUser.setText(usuario.getNome());
 
 	        ToggleButton tglBtn = (ToggleButton) linha.findViewById(R.id.tglBtnCheck);
-	        tglBtn.setChecked(usuariosConta.contains(usuario));
-	        tglBtn.setTag(usuario);
+	        tglBtn.setChecked(idsUsuarioConta.contains(usuario.getId()));
+	        tglBtn.setTag(usuario.getId());
 	        tglBtn.setOnCheckedChangeListener(onCheckChange);
 
 	        layoutItens.addView(linha);
@@ -208,22 +208,23 @@ public class ManterConta extends Activity {
 			return;
 		}
 		
-		if (usuariosConta.isEmpty()) {
+		if (idsUsuarioConta.isEmpty()) {
 			Toast.makeText(contexto, R.string.msg_valid_conta_seluser, Toast.LENGTH_LONG).show();
 			return;
 		}
 		
 		if (conta == null) {
-			conta = new Conta(nome, usuariosConta);
+			conta = new Conta(nome, idsUsuarioConta);
 			getDbConta().insert(conta);
 		} else {
 			conta.setNome(nome);
-			conta.setUsuarios(usuariosConta);
+			conta.setIdsUsuarios(idsUsuarioConta);
 			getDbConta().update(conta);
 		}
 
 		setResult(RESULT_FIRST_USER);
-		Toast.makeText(contexto, R.string.msg_salvo_sucesso, Toast.LENGTH_LONG).show();
+		finish();
+		//Toast.makeText(contexto, R.string.msg_salvo_sucesso, Toast.LENGTH_LONG).show();
 	}
 	
 	private void confirmarExclusao(Usuario usuario) {

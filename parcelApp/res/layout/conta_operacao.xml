@@ -54,6 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="70dp"
+        android:onClick="showDespesa"
         android:text="@string/btn_despesas" />
 
     <Button
@@ -62,6 +63,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="70dp"
+        android:onClick="showFechamento"
         android:text="@string/btn_fechamento" />
 
 </LinearLayout>
