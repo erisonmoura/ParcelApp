@@ -16,7 +16,10 @@ public class UsuarioDataBase implements DataBase<Usuario> {
 
 	private SQLiteDatabase db;
 
-	public UsuarioDataBase() {
+	public static final String[] COLUMNS = new String[] { DBHelper.DATABASE_ID_FIELD,
+			DBHelper.DATABASE_NAME_FIELD, DBHelper.DATABASE_OBS_FIELD };
+
+	private UsuarioDataBase() {
 		// Do nothing
 	}
 
@@ -95,13 +98,10 @@ public class UsuarioDataBase implements DataBase<Usuario> {
 	@Override
 	public Usuario get(long id) {
 		Usuario usuario = null;
-		String[] columns = new String[] { DBHelper.DATABASE_ID_FIELD,
-				DBHelper.DATABASE_NAME_FIELD };
 
-		Cursor c = db.query(DBHelper.TBL_USUARIOS, columns,
+		Cursor c = db.query(DBHelper.TBL_USUARIOS, COLUMNS,
 				DBHelper.DATABASE_ID_FIELD + "=?",
-				new String[] { String.format("%d", id) }, null, null,
-				DBHelper.DATABASE_DATE_FIELD);
+				new String[] { String.format("%d", id) }, null, null, null);
 
 		c.moveToFirst();
 		if (!c.isAfterLast()) {
@@ -113,11 +113,9 @@ public class UsuarioDataBase implements DataBase<Usuario> {
 
 	public List<Usuario> getList() {
 		List<Usuario> list = new ArrayList<Usuario>();
-		String[] columns = new String[] { DBHelper.DATABASE_ID_FIELD,
-				DBHelper.DATABASE_NAME_FIELD };
 
-		Cursor c = db.query(DBHelper.TBL_USUARIOS, columns, null, null, null,
-				null, DBHelper.DATABASE_NAME_FIELD);
+		Cursor c = db.query(DBHelper.TBL_USUARIOS, COLUMNS, null, null, null,
+				null, COLUMNS[1]);
 
 		c.moveToFirst();
 		while (!c.isAfterLast()) {
@@ -129,21 +127,10 @@ public class UsuarioDataBase implements DataBase<Usuario> {
 		return list;
 	}
 
-	public String[] getArrayList() {
-		List<Usuario> usuarios = getList();
-		String[] result = new String[usuarios.size()];
-
-		for (int i = 0; i < result.length; i++) {
-			result[i] = usuarios.get(i).getNome();
-		}
-		return result;
-	}
-
 	private Usuario fillUsuario(Cursor c) {
-		Long id = c.getLong(c.getColumnIndex(DBHelper.DATABASE_ID_FIELD));
-		String nome = c.getString(c
-				.getColumnIndex(DBHelper.DATABASE_NAME_FIELD));
-		String obs = c.getString(c.getColumnIndex(DBHelper.DATABASE_OBS_FIELD));
+		Long id = c.getLong(0);
+		String nome = c.getString(1);
+		String obs = c.getString(2);
 
 		return new Usuario(id, nome, obs);
 	}

@@ -1,6 +1,8 @@
 package com.parcelinc.parcelapp.db;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -58,16 +60,28 @@ public class DespesaDataBase implements DataBase<Despesa> {
 		} finally {
 			db.endTransaction();
 		}
-//TODO revisar
+
+		return retValue;
+	}
+	
+	public long insert(Despesa despesa, int qntd, double valor, long idUsuario, Date dtPagamento) {
+		long idDespesa = insert(despesa);
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dtPagamento);
+
+		ContentValues values = new ContentValues();
 		try {
 			db.beginTransaction();
-			for (int i = 0; i < despesa.getPagamentos().size(); i++) {
+			for (int i = 0; i < qntd; i++) {
 				values.clear();
-				
-				values.put(DBHelper.DATABASE_DATE_FIELD, despesa.getPagamentos().get(i).getData());
-				values.put(DBHelper.DATABASE_VALUE_FIELD, despesa.getPagamentos().get(i).getValor());
-				values.put(DBHelper.DATABASE_ID_USUARIO, despesa.getPagamentos().get(i).getUsuario().getId());
-				values.put(DBHelper.DATABASE_ID_DESPESA, retValue);
+
+				values.put(DBHelper.DATABASE_ID_DESPESA, idDespesa);
+				values.put(DBHelper.DATABASE_ID_USUARIO, idUsuario);
+				values.put(DBHelper.DATABASE_VALUE_FIELD, valor);
+				values.put(DBHelper.DATABASE_DATE_FIELD, DateUtil.getDate(cal));
+
+				cal.add(Calendar.MONTH, 1);
 				
 				db.insert(DBHelper.TBL_PAGAMENTOS, null, values);
 			}
@@ -75,16 +89,16 @@ public class DespesaDataBase implements DataBase<Despesa> {
 		} finally {
 			db.endTransaction();
 		}
-
-		return retValue;
+		
+		return idDespesa;
 	}
-//TODO implementar com update dos pagamentos da despesa
+	
 	@Override
 	public long update(Despesa despesa) {
 		long retValue = -1;
 
 		ContentValues values = new ContentValues();
-		values.put(DBHelper.DATABASE_ID_FIELD, despesa.getId());
+		values.put(DBHelper.DATABASE_NAME_FIELD, despesa.getNome());
 
 		try {
 			db.beginTransaction();
@@ -160,15 +174,15 @@ public class DespesaDataBase implements DataBase<Despesa> {
 		return list;
 	}
 	
-	private Map<Long, Set<Long>> listarRelacao(Long idPagamento) {
+	private Map<Long, Set<Long>> listarRelacao(Long idDespesa) {
 		Map<Long, Set<Long>> mapa = new HashMap<Long, Set<Long>>();
 		
 		String[] cols = new String[] { DBHelper.DATABASE_ID_DESPESA };
 		String where = null;
 		String[] params = null;
-		if (idPagamento == null) {
+		if (idDespesa == null) {
 			where = DBHelper.DATABASE_ID_DESPESA + "=?";
-			params = new String[] { String.format("%d", idPagamento) };
+			params = new String[] { String.format("%d", idDespesa) };
 		}
 
 		Cursor cr = db.query(DBHelper.TBL_PAGAMENTOS, cols, where, params, null,
@@ -181,6 +195,8 @@ public class DespesaDataBase implements DataBase<Despesa> {
 				conjunto = new HashSet<Long>();
 			}
 			conjunto.add(cr.getLong(1));
+			
+			mapa.put(cr.getLong(0), conjunto);
 
 			cr.moveToNext();
 		}

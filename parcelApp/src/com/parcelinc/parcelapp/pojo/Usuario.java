@@ -51,6 +51,11 @@ public class Usuario implements Serializable {
 	public void setObs(String obs) {
 		this.obs = obs;
 	}
+	
+	@Override
+	public String toString() {
+		return getNome();
+	}
 
 	@Override
 	public int hashCode() {

@@ -3,15 +3,17 @@ package com.parcelinc.parcelapp.activity;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.parcelinc.parcelapp.R;
 import com.parcelinc.parcelapp.db.ContaDatabase;
@@ -24,9 +26,32 @@ public class SelecaoConta extends Activity {
 	private static final int OPR_ALT = 3;
 	
 	private Context contexto;
-	private ListView listaContas;
+
+	private ContaDatabase dbConta;
+	private LinearLayout layoutItens;
 	
-	private List<Conta> lista;
+	
+	private class OnClickExcuir implements OnClickListener {
+
+		private Conta conta;
+
+		public OnClickExcuir(Conta conta) {
+			this.conta = conta;
+		}
+		
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			getDbConta().remove(conta);
+			carregarContas();
+		}
+	}
+
+	public ContaDatabase getDbConta() {
+		if (dbConta == null) {
+			dbConta = ContaDatabase.getInstance(contexto);
+		}
+		return dbConta;
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,40 +59,9 @@ public class SelecaoConta extends Activity {
 		setContentView(R.layout.conta_selecao);
 
 		contexto = this;
-		listaContas = (ListView) findViewById(R.id.lstContas);
-		listaContas.setOnItemLongClickListener(new OnItemLongClickListener() {
+		layoutItens = (LinearLayout) findViewById(R.id.layoutItens);
 
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				// TODO Implementar exibição de menu suspenso
-				return false;
-			}
-
-		});
-		
-		listaContas.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view,
-					int position, long id) {
-				Conta conta = lista.get(position);
-				selecionarConta(conta);
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-		});
-
-		List<Conta> lista = listarContas();
-		
-		if (lista.size() > 0) {
-			carregarContas(lista);
-		} else {
+		if (!carregarContas()) {
 			novaConta(OPR_AUTO);
 		}
 	}
@@ -81,7 +75,7 @@ public class SelecaoConta extends Activity {
 		case OPR_AUTO:
 		case OPR_ALT:
 			if (resultCode == RESULT_FIRST_USER) {
-				carregarContas(listarContas());
+				carregarContas();
 			} else if (requestCode == OPR_AUTO) {
 				finish();
 			}
@@ -98,11 +92,16 @@ public class SelecaoConta extends Activity {
 	}
 	
 	public void alterarConta(View view) {
-		novaConta(OPR_ALT, contaSelecionada());
+		novaConta(OPR_ALT, (Conta) view.getTag());
+	}
+
+	public void excluirConta(View view) {
+		Conta contaParaExclusao = (Conta) view.getTag();
+		confirmarExclusao(contaParaExclusao);
 	}
 	
 	public void selecionarConta(View view) {
-		selecionarConta(contaSelecionada());
+		selecionarConta((Conta) view.getTag());
 	}
 
 	private void selecionarConta(Conta item) {
@@ -112,17 +111,46 @@ public class SelecaoConta extends Activity {
 		startActivity(it);
 	}
 
-	private Conta contaSelecionada() {
-		Conta item = (Conta) listaContas.getSelectedItem();
-		return item;
+	private boolean carregarContas() {
+		layoutItens.removeAllViews();
+		List<Conta> lista = listarContas();
+		
+		if (lista.size() > 0) {
+			carregarContas(lista);
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	private void carregarContas(List<Conta> lista) {
-		this.lista = lista;
-		ArrayAdapter<Conta> adapter = new ArrayAdapter<Conta>(contexto,
-				android.R.layout.simple_list_item_single_choice, lista);
+		for (Conta conta : lista) {
+	        View linha = LayoutInflater.from(contexto).inflate(R.layout.linha_conta, layoutItens, false);
+	        linha.setTag(conta);
+
+	        ImageView btnEdit = (ImageView) linha.findViewById(R.id.imgEdit);
+	        btnEdit.setTag(conta);
+
+	        ImageView btnTrash = (ImageView) linha.findViewById(R.id.imgTrash);
+	        btnTrash.setTag(conta);
+
+	        TextView txtUser = (TextView) linha.findViewById(R.id.txtRowUser);
+	        txtUser.setText(conta.getNome());
+
+	        layoutItens.addView(linha);
+		}
+	}
+	
+	private void confirmarExclusao(Conta conta) {
+		OnClickExcuir onclick = new OnClickExcuir(conta);
 		
-		listaContas.setAdapter(adapter);
+		String msg = getString(R.string.msg_confirmar_exclusao, " a conta " + conta);
+
+		AlertDialog alert = new AlertDialog.Builder(this)
+				.setTitle(R.string.title_confirmar).setMessage(msg)
+				.setPositiveButton("Sim", onclick)
+				.setNegativeButton("Não", null).create();
+		alert.show();
 	}
 	
 	private void novaConta(int operacao, Conta conta) {

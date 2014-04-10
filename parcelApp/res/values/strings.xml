@@ -8,6 +8,17 @@
     <string name="title_manter_user">Manter Usário</string>
     <string name="title_listar_despesa">Listar Despesas</string>
     <string name="title_relatorio_fechamento">Relatório de Fechamento</string>
+
+    <string name="msg_salvo_sucesso">Registro salvo com sucesso!</string>
+    
+    <string name="msg_valid_conta_seluser">Selecione pelo menos um Usuário!</string>
+    <string name="msg_valid_required">Campo obrigatório não preenchido!</string>
+    
+    <string name="title_confirmar">Confirmar</string>
+    <string name="msg_confirmar_exclusao">Tem certeza que deseja excluir%s?</string>
+    
+    <string name="title_welcome">Bem Vindo!</string>
+    <string name="msg_welcome">Seja muito Bem Vindo ao %s!\n\nPara iniciar os trabalhos se faz necessário o registro de pelo menos: Usuário e Conta.\n\nRealize o cadastro e começe a acompanhar seus gastos.</string>
     
     <string name="btn_novo_user">Novo Usuário</string>
     <string name="btn_nova_conta">Nova Conta</string>
@@ -20,6 +31,7 @@
     
     <string name="mnu_selecionar">Selecionar</string>
     <string name="mnu_alterar">Alterar</string>
+    <string name="mnu_excluir">Excluir</string>
     <string name="mnu_alterar_nome">Alterar Nome</string>
     <string name="mnu_alterar_parcela">Alterar Parcela</string>
     <string name="mnu_excluir_despesa">Excluir Despesa</string>

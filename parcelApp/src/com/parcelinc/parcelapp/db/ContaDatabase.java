@@ -21,6 +21,9 @@ public class ContaDatabase implements DataBase<Conta> {
 
 	private SQLiteDatabase db;
 
+	public static final String[] COLUMNS = new String[] {
+			DBHelper.DATABASE_ID_FIELD, DBHelper.DATABASE_NAME_FIELD };
+
 	private ContaDatabase() {
 		// Do nothing
 	}
@@ -74,7 +77,8 @@ public class ContaDatabase implements DataBase<Conta> {
 
 		return retValue;
 	}
-//TODO implementar update do relacionamento contas-usuarios
+
+	// TODO implementar update do relacionamento contas-usuarios
 	@Override
 	public long update(Conta conta) {
 		long retValue = -1;
@@ -113,17 +117,14 @@ public class ContaDatabase implements DataBase<Conta> {
 	@Override
 	public Conta get(long id) {
 		Conta conta = null;
-		String[] columns = new String[] { DBHelper.DATABASE_ID_FIELD,
-				DBHelper.DATABASE_NAME_FIELD };
-
-		Cursor c = db.query(DBHelper.TBL_CONTAS, columns,
+		Cursor c = db.query(DBHelper.TBL_CONTAS, COLUMNS,
 				DBHelper.DATABASE_ID_FIELD + "=?",
 				new String[] { String.format("%d", id) }, null, null, null);
 
 		c.moveToFirst();
 		if (!c.isAfterLast()) {
 			conta = fillConta(c);
-			
+
 			Map<Long, Set<Long>> mapa = listarRelacao(conta.getId());
 			for (Long idUsuario : mapa.get(conta.getId())) {
 				conta.addUsuario(new Usuario(idUsuario));
@@ -135,39 +136,38 @@ public class ContaDatabase implements DataBase<Conta> {
 
 	public List<Conta> getList() {
 		List<Conta> list = new ArrayList<Conta>();
-		String[] cols = new String[] { DBHelper.DATABASE_ID_FIELD,
-				DBHelper.DATABASE_NAME_FIELD };
-		Cursor cr = db.query(DBHelper.TBL_CONTAS, cols, null, null, null,
+		Cursor cr = db.query(DBHelper.TBL_CONTAS, COLUMNS, null, null, null,
 				null, DBHelper.DATABASE_NAME_FIELD);
 
 		Map<Long, Set<Long>> mapa = listarRelacao(null);
-		
+
 		cr.moveToFirst();
 		while (!cr.isAfterLast()) {
 			Conta conta = fillConta(cr);
 			for (Long idUsuario : mapa.get(conta.getId())) {
 				conta.addUsuario(new Usuario(idUsuario));
 			}
-			
+
 			list.add(conta);
 			cr.moveToNext();
 		}
 		return list;
 	}
-	
+
 	private Map<Long, Set<Long>> listarRelacao(Long idConta) {
 		Map<Long, Set<Long>> mapa = new HashMap<Long, Set<Long>>();
-		
-		String[] cols = new String[] { DBHelper.DATABASE_ID_CONTA, DBHelper.DATABASE_ID_USUARIO };
+
+		String[] cols = new String[] { DBHelper.DATABASE_ID_CONTA,
+				DBHelper.DATABASE_ID_USUARIO };
 		String where = null;
 		String[] params = null;
-		if (idConta == null) {
+		if (idConta != null) {
 			where = DBHelper.DATABASE_ID_CONTA + "=?";
 			params = new String[] { String.format("%d", idConta) };
 		}
 
-		Cursor cr = db.query(DBHelper.TBL_CONTAS_USUARIOS, cols, where, params, null,
-				null, DBHelper.DATABASE_ID_CONTA);
+		Cursor cr = db.query(DBHelper.TBL_CONTAS_USUARIOS, cols, where, params,
+				null, null, DBHelper.DATABASE_ID_CONTA);
 
 		cr.moveToFirst();
 		while (!cr.isAfterLast()) {
@@ -176,28 +176,18 @@ public class ContaDatabase implements DataBase<Conta> {
 				conjunto = new HashSet<Long>();
 			}
 			conjunto.add(cr.getLong(1));
+			
+			mapa.put(cr.getLong(0), conjunto);
 
 			cr.moveToNext();
 		}
-		
+
 		return mapa;
 	}
 
-	
-	public String[] getArrayList() {
-		List<Conta> conta = getList();
-		String[] result = new String[conta.size()];
-
-		for (int i = 0; i < result.length; i++) {
-			result[i] = conta.get(i).getNome();
-		}
-		return result;
-	}
-
 	private Conta fillConta(Cursor c) {
-		Long id = c.getLong(c.getColumnIndex(DBHelper.DATABASE_ID_FIELD));
-		String nome = c.getString(c
-				.getColumnIndex(DBHelper.DATABASE_NAME_FIELD));
+		Long id = c.getLong(0);
+		String nome = c.getString(1);
 
 		return new Conta(id, nome, null);
 	}

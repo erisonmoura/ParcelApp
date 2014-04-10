@@ -60,6 +60,11 @@ public class Conta implements Serializable {
 		addAllUsuario(usuarios);
 	}
 
+	@Override
+	public String toString() {
+		return getNome();
+	}
+	
 	public boolean addAllUsuario(List<Usuario> usuarios) {
 		return (usuarios != null) ? this.usuarios.addAll(usuarios) : true;
 	}

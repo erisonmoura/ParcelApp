@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -36,13 +39,40 @@ public class ManterConta extends Activity {
 
 	private Context contexto;
 
-	UsuarioDataBase dbUser;
-	ContaDatabase dbConta;
+	private UsuarioDataBase dbUser;
+	private ContaDatabase dbConta;
 	
 	private List<Usuario> usuariosConta;
 
 	private EditText edtNome;
 	private LinearLayout layoutItens;
+
+	private class OnCheckedChange implements OnCheckedChangeListener {
+		
+		@Override
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			if (isChecked) {
+				usuariosConta.add((Usuario) buttonView.getTag()); 
+			} else {
+				usuariosConta.remove((Usuario) buttonView.getTag());
+			}
+		}
+	}
+
+	private class OnClickExcuir implements OnClickListener {
+
+		private Usuario usuario;
+
+		public OnClickExcuir(Usuario usuario) {
+			this.usuario = usuario;
+		}
+		
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			getDbUser().remove(usuario);
+			carregarUsuarios();
+		}
+	}
 
 	public UsuarioDataBase getDbUser() {
 		if (dbUser == null) {
@@ -80,12 +110,51 @@ public class ManterConta extends Activity {
 		}
 
 		if (!carregarUsuarios()) {
-			novoUsuario(OPR_AUTO);
-			Toast.makeText(contexto, "Olha aqui", Toast.LENGTH_SHORT).show();
+			showWelcome();
 		}
 	}
+	
+	private void showWelcome() {
+		OnClickListener onclick = new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				novoUsuario(OPR_AUTO);
+			}
+		};
+		
+		String appName = getString(R.string.app_name); 
+		String msg = getString(R.string.msg_welcome, appName);
 
+		AlertDialog alert = new AlertDialog.Builder(this)
+				.setTitle(R.string.title_welcome).setMessage(msg)
+				.setNeutralButton("Ok", onclick).create();
+		alert.show();
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		switch (requestCode) {
+		case OPR_USER:
+		case OPR_AUTO:
+		case OPR_ALT:
+			if (resultCode == RESULT_FIRST_USER) {
+				carregarUsuarios();
+			} else if (requestCode == OPR_AUTO) {
+				finish();
+			}
+			break;
+
+		default:
+			// Não precisa realizar operação
+			break;
+		}
+	}
+	
 	private boolean carregarUsuarios() {
+		layoutItens.removeAllViews();
 		List<Usuario> lista = listarUsuarios();
 
 		if (lista.size() > 0) {
@@ -97,19 +166,8 @@ public class ManterConta extends Activity {
 	}
 	
 	private void carregarUsuarios(List<Usuario> lista) {
-		OnCheckedChangeListener onCheckChange = new OnCheckedChangeListener() {
-			
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				if (isChecked) {
-					usuariosConta.add((Usuario) buttonView.getTag()); 
-				} else {
-					usuariosConta.remove((Usuario) buttonView.getTag());
-				}
-			}
-		};
+		OnCheckedChangeListener onCheckChange = new OnCheckedChange();
 
-		layoutItens.removeAllViews();
 		for (Usuario usuario : lista) {
 	        View linha = LayoutInflater.from(contexto).inflate(R.layout.linha_usuario, layoutItens, false);
 	        ImageView btnEdit = (ImageView) linha.findViewById(R.id.imgEdit);
@@ -138,16 +196,46 @@ public class ManterConta extends Activity {
 		novoUsuario(OPR_ALT, (Usuario) view.getTag());
 	}
 
-	private Usuario usuarioParaExclusao;
-	
 	public void excluirUsuario(View view) {
-		usuarioParaExclusao = (Usuario) view.getTag();
-		// TODO exibir Dialogo
+		Usuario usuarioParaExclusao = (Usuario) view.getTag();
+		confirmarExclusao(usuarioParaExclusao);
+	}
+
+	public void salvarConta(View view) {
+		String nome = edtNome.getText().toString().trim();
+		if ("".equals(nome)) {
+			Toast.makeText(contexto, R.string.msg_valid_required, Toast.LENGTH_LONG).show();
+			return;
+		}
+		
+		if (usuariosConta.isEmpty()) {
+			Toast.makeText(contexto, R.string.msg_valid_conta_seluser, Toast.LENGTH_LONG).show();
+			return;
+		}
+		
+		if (conta == null) {
+			conta = new Conta(nome, usuariosConta);
+			getDbConta().insert(conta);
+		} else {
+			conta.setNome(nome);
+			conta.setUsuarios(usuariosConta);
+			getDbConta().update(conta);
+		}
+
+		setResult(RESULT_FIRST_USER);
+		Toast.makeText(contexto, R.string.msg_salvo_sucesso, Toast.LENGTH_LONG).show();
 	}
 	
-	public void confirmarExclusao(View view) {
-		getDbUser().remove(usuarioParaExclusao);
-		carregarUsuarios();
+	private void confirmarExclusao(Usuario usuario) {
+		OnClickExcuir onclick = new OnClickExcuir(usuario);
+		
+		String msg = getString(R.string.msg_confirmar_exclusao, " o usuário " + usuario);
+
+		AlertDialog alert = new AlertDialog.Builder(this)
+				.setTitle(R.string.title_confirmar).setMessage(msg)
+				.setPositiveButton("Sim", onclick)
+				.setNegativeButton("Não", null).create();
+		alert.show();
 	}
 	
 	private void novoUsuario(int operacao, Usuario usuario) {
