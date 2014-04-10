@@ -4,23 +4,23 @@ package com.parcelinc.parcelapp.pojo;
 public class Pagamento {
 
 	private Long id;
-	private Despesa despesa;
+	private Long idDespesa;
 	private String data;
-	private Usuario usuario;
+	private Long idUsuario;
 	private double valor;
 
-	public Pagamento(Long id, Despesa despesa, String data, Usuario usuario,
+	public Pagamento(Long id, Long idDespesa, String data, Long idUsuario,
 			double valor) {
 		super();
 		this.id = id;
-		this.despesa = despesa;
+		this.idDespesa = idDespesa;
 		this.data = data;
-		this.usuario = usuario;
+		this.idUsuario = idUsuario;
 		this.valor = valor;
 	}
 
-	public Pagamento(Despesa despesa, String data, Usuario usuario, double valor) {
-		this(null, despesa, data, usuario, valor);
+	public Pagamento(Long idDespesa, String data, Long idUsuario, double valor) {
+		this(null, idDespesa, data, idUsuario, valor);
 	}
 	public Pagamento(Long id){
 		this(id, null, null, null, 0);
@@ -38,12 +38,12 @@ public class Pagamento {
 		this.id = id;
 	}
 
-	public Despesa getDespesa() {
-		return despesa;
+	public Long getIdDespesa() {
+		return idDespesa;
 	}
 
-	public void setDespesa(Despesa despesa) {
-		this.despesa = despesa;
+	public void setIdDespesa(Long idDespesa) {
+		this.idDespesa = idDespesa;
 	}
 
 	public String getData() {
@@ -54,12 +54,12 @@ public class Pagamento {
 		this.data = data;
 	}
 
-	public Usuario getUsuario() {
-		return usuario;
+	public Long getIdUsuario() {
+		return idUsuario;
 	}
 
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
+	public void setIdUsuario(Long idUsuario) {
+		this.idUsuario = idUsuario;
 	}
 
 	public double getValor() {
