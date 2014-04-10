@@ -2,10 +2,8 @@ package com.parcelinc.parcelapp.db;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -13,7 +11,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.parcelinc.parcelapp.pojo.Conta;
-import com.parcelinc.parcelapp.pojo.Usuario;
 
 public class ContaDatabase implements DataBase<Conta> {
 
@@ -124,7 +121,7 @@ public class ContaDatabase implements DataBase<Conta> {
 		if (!c.isAfterLast()) {
 			conta = fillConta(c);
 
-			Map<Long, Set<Long>> mapa = listarRelacao(conta.getId());
+			Map<Long, List<Long>> mapa = listarRelacao(conta.getId());
 			for (Long idUsuario : mapa.get(conta.getId())) {
 				conta.addIdUsuario(idUsuario);
 			}
@@ -138,7 +135,7 @@ public class ContaDatabase implements DataBase<Conta> {
 		Cursor cr = db.query(DBHelper.TBL_CONTAS, COLUMNS, null, null, null,
 				null, DBHelper.DATABASE_NAME_FIELD);
 
-		Map<Long, Set<Long>> mapa = listarRelacao(null);
+		Map<Long, List<Long>> mapa = listarRelacao(null);
 
 		cr.moveToFirst();
 		while (!cr.isAfterLast()) {
@@ -153,8 +150,8 @@ public class ContaDatabase implements DataBase<Conta> {
 		return list;
 	}
 
-	private Map<Long, Set<Long>> listarRelacao(Long idConta) {
-		Map<Long, Set<Long>> mapa = new HashMap<Long, Set<Long>>();
+	private Map<Long, List<Long>> listarRelacao(Long idConta) {
+		Map<Long, List<Long>> mapa = new HashMap<Long, List<Long>>();
 
 		String[] cols = new String[] { DBHelper.DATABASE_ID_CONTA,
 				DBHelper.DATABASE_ID_USUARIO };
@@ -170,13 +167,19 @@ public class ContaDatabase implements DataBase<Conta> {
 
 		cr.moveToFirst();
 		while (!cr.isAfterLast()) {
-			Set<Long> conjunto = mapa.get(cr.getLong(0));
-			if (conjunto == null) {
-				conjunto = new HashSet<Long>();
-			}
-			conjunto.add(cr.getLong(1));
+			Long idContaTmp = cr.getLong(0);
+			Long idUserTmp = cr.getLong(1);
 			
-			mapa.put(cr.getLong(0), conjunto);
+			List<Long> lista = mapa.get(idContaTmp);
+			if (lista == null) {
+				lista = new ArrayList<Long>();
+			}
+
+			if (!lista.contains(idUserTmp)) {
+				lista.add(idUserTmp);
+			}
+			
+			mapa.put(idContaTmp, lista);
 
 			cr.moveToNext();
 		}
