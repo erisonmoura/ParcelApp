@@ -62,10 +62,9 @@ public class ContaDatabase implements DataBase<Conta> {
 
 		try {
 			db.beginTransaction();
-			for (int i = 0; i < conta.getUsuarios().size(); i++) {
+			for (int i = 0; i < conta.getIdsUsuario().size(); i++) {
 				cv.clear();
-				cv.put(DBHelper.DATABASE_ID_USUARIO, conta.getUsuarios().get(i)
-						.getId());
+				cv.put(DBHelper.DATABASE_ID_USUARIO, conta.getIdsUsuario().get(i));
 				cv.put(DBHelper.DATABASE_ID_CONTA, retValue);
 
 				db.insert(DBHelper.TBL_CONTAS_USUARIOS, null, cv);
@@ -127,7 +126,7 @@ public class ContaDatabase implements DataBase<Conta> {
 
 			Map<Long, Set<Long>> mapa = listarRelacao(conta.getId());
 			for (Long idUsuario : mapa.get(conta.getId())) {
-				conta.addUsuario(new Usuario(idUsuario));
+				conta.addIdUsuario(idUsuario);
 			}
 		}
 
@@ -145,7 +144,7 @@ public class ContaDatabase implements DataBase<Conta> {
 		while (!cr.isAfterLast()) {
 			Conta conta = fillConta(cr);
 			for (Long idUsuario : mapa.get(conta.getId())) {
-				conta.addUsuario(new Usuario(idUsuario));
+				conta.addIdUsuario(idUsuario);
 			}
 
 			list.add(conta);

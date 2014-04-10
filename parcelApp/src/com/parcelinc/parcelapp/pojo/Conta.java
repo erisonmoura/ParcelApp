@@ -14,17 +14,17 @@ public class Conta implements Serializable {
 
 	private Long id;
 	private String nome;
-	private List<Usuario> usuarios = new ArrayList<Usuario>(0);
+	private List<Long> idsUsuario = new ArrayList<Long>(0);
 
-	public Conta(Long id, String nome, List<Usuario> usuarios) {
+	public Conta(Long id, String nome, List<Long> idsUsuario) {
 		super();
 		this.id = id;
 		this.nome = nome;
-		setUsuarios(usuarios);
+		setIdsUsuarios(idsUsuario);
 	}
 
-	public Conta(String nome, List<Usuario> usuarios) {
-		this(null, nome, usuarios);
+	public Conta(String nome, List<Long> idsUsuario) {
+		this(null, nome, idsUsuario);
 	}
 
 	public Conta(Long id) {
@@ -51,13 +51,13 @@ public class Conta implements Serializable {
 		this.nome = nome;
 	}
 
-	public List<Usuario> getUsuarios() {
-		return Collections.unmodifiableList(usuarios);
+	public List<Long> getIdsUsuario() {
+		return Collections.unmodifiableList(idsUsuario);
 	}
 
-	public void setUsuarios(List<Usuario> usuarios) {
-		this.usuarios.clear();
-		addAllUsuario(usuarios);
+	public void setIdsUsuarios(List<Long> idsUsuario) {
+		this.idsUsuario.clear();
+		addAllIdsUsuario(idsUsuario);
 	}
 
 	@Override
@@ -65,16 +65,16 @@ public class Conta implements Serializable {
 		return getNome();
 	}
 	
-	public boolean addAllUsuario(List<Usuario> usuarios) {
-		return (usuarios != null) ? this.usuarios.addAll(usuarios) : true;
+	public boolean addAllIdsUsuario(List<Long> idsUsuario) {
+		return (idsUsuario != null) ? this.idsUsuario.addAll(idsUsuario) : true;
 	}
 
-	public boolean addUsuario(Usuario usuario) {
-		return this.usuarios.add(usuario);
+	public boolean addIdUsuario(Long idUsuario) {
+		return this.idsUsuario.add(idUsuario);
 	}
 	
-	public boolean removeUsuario(Usuario usuario) {
-		return this.usuarios.remove(usuario);
+	public boolean removeIdUsuario(Long idUsuario) {
+		return this.idsUsuario.remove(idUsuario);
 	}
 
 }
