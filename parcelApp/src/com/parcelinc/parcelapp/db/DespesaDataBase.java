@@ -62,9 +62,10 @@ public class DespesaDataBase implements DataBase<Despesa> {
 
 		return retValue;
 	}
-	
+
 	public long insert(Despesa despesa, int qntd, double valor, long idUsuario, Calendar calPagamento) {
 		long idDespesa = -1;
+
 		ContentValues values = new ContentValues();
 		try {
 			db.beginTransaction();
