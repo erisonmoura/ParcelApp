@@ -141,7 +141,7 @@ public class DespesaDataBase implements DataBase<Despesa> {
 		if (!c.isAfterLast()) {
 			despesa = fillDespesa(c);
 			
-			Map<Long, List<Long>> mapa = listarRelacao(despesa.getId());
+			Map<Long, List<Long>> mapa = listarRelacao(despesa.getId(), null);
 			for (Long idPagamento : mapa.get(despesa.getId())) {
 				despesa.addPagamento(new Pagamento(idPagamento));
 			}
@@ -157,7 +157,7 @@ public class DespesaDataBase implements DataBase<Despesa> {
 		Cursor cr = db.query(DBHelper.TBL_DESPESAS, cols, null, null, null,
 				null, DBHelper.DATABASE_NAME_FIELD);
 
-		Map<Long, List<Long>> mapa = listarRelacao(null);
+		Map<Long, List<Long>> mapa = listarRelacao(null, null);
 		
 		cr.moveToFirst();
 		while (!cr.isAfterLast()) {
@@ -171,19 +171,44 @@ public class DespesaDataBase implements DataBase<Despesa> {
 		}
 		return list;
 	}
-	
-	private Map<Long, List<Long>> listarRelacao(Long idDespesa) {
+
+	/**
+	 * Retorna a lista dos IDs de Pagamento de uma Despesa no mês de referência
+	 * @param idDespesa ID da Despesa para filtrar
+	 * @param filtroMes Ano e Mês para filtro, conforme {@link DateUtil#getFilterMonth(String, int)}
+	 * @return Lista de IDs de Pagamento
+	 */
+	public List<Long> getListaPagamentos(Long idDespesa, String filtroMes) {
+		Map<Long, List<Long>> mapa = listarRelacao(idDespesa, filtroMes);
+		return mapa.get(idDespesa);
+	}
+
+	private Map<Long, List<Long>> listarRelacao(Long idDespesa, String filtroMes) {
 		Map<Long, List<Long>> mapa = new HashMap<Long, List<Long>>();
 		
 		String[] cols = new String[] { DBHelper.DATABASE_ID_DESPESA, DBHelper.DATABASE_ID_FIELD };
-		String where = null;
-		String[] params = null;
-		if (idDespesa == null) {
-			where = DBHelper.DATABASE_ID_DESPESA + "=?";
-			params = new String[] { String.format("%d", idDespesa) };
+		StringBuilder where = new StringBuilder();
+		List<String> params = new ArrayList<String>();
+
+		if (idDespesa != null) {
+			where.append(DBHelper.DATABASE_ID_DESPESA).append(" = ?");
+			params.add(String.format("%d", idDespesa));
+		}
+		
+		if (filtroMes != null && "".equals(filtroMes.trim())) {
+			if (where.length() > 0) {
+				where.append(" and ");
+			}
+			where.append(DBHelper.DATABASE_DATE_FIELD).append(" like ?");
+			params.add("%" + filtroMes + "-%");
 		}
 
-		Cursor cr = db.query(DBHelper.TBL_PAGAMENTOS, cols, where, params, null,
+		String[] paramsArray = null;
+		if (params.size() > 1) {
+			paramsArray = params.toArray(new String[params.size()]);
+		}
+		
+		Cursor cr = db.query(DBHelper.TBL_PAGAMENTOS, cols, where.toString(), paramsArray, null,
 				null, DBHelper.DATABASE_DATE_FIELD);
 
 		cr.moveToFirst();
@@ -208,7 +233,7 @@ public class DespesaDataBase implements DataBase<Despesa> {
 		return mapa;
 	}
 
-	public List<Despesa> getFilter(Long idConta, String filtroMes) {
+	public List<Despesa> getList(Long idConta, String filtroMes) {
 		filtroMes = filtroMes + DateUtil.SEPARATOR;
 
 		

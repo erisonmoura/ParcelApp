@@ -11,6 +11,8 @@ public class Despesa implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	// TODO Tratar apenas a lista de IDs dos Pagamentos
+	
 	private Long id;
 	private String nome;
 	private Conta conta;

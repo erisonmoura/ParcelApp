@@ -9,7 +9,8 @@
     <string name="title_listar_despesa">Listar Despesas</string>
     <string name="title_relatorio_fechamento">Relatório de Fechamento</string>
 
-    <string name="msg_salvo_sucesso">Registro salvo com sucesso!</string>
+    <string name="msg_sem_dados">Registro salvo com sucesso!</string>
+    <string name="msg_salvo_sucesso">Nenhum registro encontrado!</string>
     
     <string name="msg_valid_conta_seluser">Selecione pelo menos um Usuário!</string>
     <string name="msg_valid_required">Campo obrigatório não preenchido!</string>
