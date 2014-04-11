@@ -8,11 +8,15 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.parcelinc.parcelapp.pojo.Despesa;
 import com.parcelinc.parcelapp.pojo.Pagamento;
+import com.parcelinc.parcelapp.pojo.Usuario;
 
 public class PagamentoDataBase implements DataBase<Pagamento> {
 
 	private static final PagamentoDataBase instance = new PagamentoDataBase();
+	private static DataBase<Despesa> despesaDataBase;
+	private static DataBase<Usuario> usuarioDataBase;
 
 	private SQLiteDatabase db;
 
@@ -35,6 +39,8 @@ public class PagamentoDataBase implements DataBase<Pagamento> {
 	public static PagamentoDataBase getInstance(Context ctx) {
 		if (instance.db == null || !instance.db.isOpen()) {
 			instance.db = new DBHelper(ctx).getWritableDatabase();
+			despesaDataBase = DespesaDataBase.getInstance(ctx);
+			usuarioDataBase = UsuarioDataBase.getInstance(ctx);
 		}
 		return instance;
 	}
@@ -46,8 +52,8 @@ public class PagamentoDataBase implements DataBase<Pagamento> {
 		ContentValues values = new ContentValues();
 		values.put(DBHelper.DATABASE_DATE_FIELD, pagamento.getData());
 		values.put(DBHelper.DATABASE_VALUE_FIELD, pagamento.getValor());
-		values.put(DBHelper.DATABASE_ID_USUARIO, pagamento.getIdUsuario());
-		values.put(DBHelper.DATABASE_ID_DESPESA, pagamento.getIdDespesa());
+		values.put(DBHelper.DATABASE_ID_USUARIO, pagamento.getUsuario().getId());
+		values.put(DBHelper.DATABASE_ID_DESPESA, pagamento.getDespesa().getId());
 
 		try {
 			db.beginTransaction();
@@ -69,8 +75,8 @@ public class PagamentoDataBase implements DataBase<Pagamento> {
 		ContentValues values = new ContentValues();
 		values.put(DBHelper.DATABASE_DATE_FIELD, pagamento.getData());
 		values.put(DBHelper.DATABASE_VALUE_FIELD, pagamento.getValor());
-		values.put(DBHelper.DATABASE_ID_USUARIO, pagamento.getIdUsuario());
-		values.put(DBHelper.DATABASE_ID_DESPESA, pagamento.getIdDespesa());
+		values.put(DBHelper.DATABASE_ID_USUARIO, pagamento.getUsuario().getId());
+		values.put(DBHelper.DATABASE_ID_DESPESA, pagamento.getDespesa().getId());
 
 		try {
 			db.beginTransaction();
@@ -131,18 +137,19 @@ public class PagamentoDataBase implements DataBase<Pagamento> {
 			c.moveToNext();
 		}
 		return list;
-	}	
+	}
 
-	public List<Pagamento> getList(Long idDespesa, String filtroMes, Long idUsuario) {
+	public List<Pagamento> getList(Long idDespesa, String filtroMes,
+			Long idUsuario) {
 		filtroMes = filtroMes + DateUtil.SEPARATOR;
 
-		/* TODO Cada parâmetro pode ser opcional
-		 * Deve ordenar por: Data, Nome da Despesa, e Nome do Usuário 
+		/*
+		 * TODO Cada parâmetro pode ser opcional Deve ordenar por: Data, Nome da
+		 * Despesa, e Nome do Usuário
 		 */
 		return null;
 	}
-	
-	// TODO Preparar para povoar os Objetos Usuário e Despesa
+
 	private Pagamento fillPagamento(Cursor c) {
 		Long id = c.getLong(0);
 		Long idDespesa = c.getLong(1);
@@ -150,7 +157,16 @@ public class PagamentoDataBase implements DataBase<Pagamento> {
 		Long idUsuario = c.getLong(3);
 		double valor = c.getDouble(4);
 
-		return new Pagamento(id, idDespesa, data, idUsuario, valor);
+		Despesa despesa = null;
+		if (idDespesa.longValue() != 0) {
+			despesa = despesaDataBase.get(idDespesa);
+		}
+		Usuario usuario = null;
+		if (idUsuario.longValue() != 0) {
+			usuario = usuarioDataBase.get(idUsuario);
+		}
+
+		return new Pagamento(id, despesa, data, usuario, valor);
 	}
 
 }
