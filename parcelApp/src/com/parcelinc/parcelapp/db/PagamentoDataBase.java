@@ -162,7 +162,7 @@ public class PagamentoDataBase implements DataBase<Pagamento> {
 			despesa = despesaDataBase.get(idDespesa);
 		}
 		Usuario usuario = null;
-		if (idUsuario.longValue() != 0) {
+		if (idUsuario != null) {
 			usuario = usuarioDataBase.get(idUsuario);
 		}
 
