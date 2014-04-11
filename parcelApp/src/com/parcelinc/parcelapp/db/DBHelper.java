@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
 public static final String NOME_DO_BANCO = "parcelApp";
+public static final int VERSAO_BANCO = 1;
 
 public static final String DATABASE_ID_FIELD = "_ID";
 public static final String DATABASE_ID_CONTA = "ID_CONTA";
@@ -64,13 +65,24 @@ public static final String DATABASE_DATE_FIELD = "DATA";
 			+ DATABASE_ID_DESPESA + " INTEGER NOT NULL REFERENCES "+TBL_DESPESAS+" ("+DATABASE_ID_FIELD+") ON DELETE CASCADE); ";
 	
 
-	public DBHelper(Context context, String name, CursorFactory factory,
+	/**
+	 * Este método foi posto aqui apenas facilitar o entendimento dos parâmetros
+	 * @param context
+	 * @param name
+	 * @param factory
+	 * @param version
+	 */
+	protected DBHelper(Context context, String name, CursorFactory factory,
 			int version) {
 		super(context, name, factory, version);
-		// TODO Auto-generated constructor stub
 	}
+
+	/**
+	 * Toda classe DBHelper só precisará do Context para sua construção.  
+	 * @param ctx Contexto (activity) que está gerindo o acesso ao banco. 
+	 */
 	public DBHelper(Context ctx) {
-		super(ctx, NOME_DO_BANCO, null, 1);
+		super(ctx, NOME_DO_BANCO, null, VERSAO_BANCO);
 	}
 
 	@Override

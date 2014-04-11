@@ -2,7 +2,6 @@ package com.parcelinc.parcelapp.db;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.parcelinc.parcelapp.pojo.Despesa;
-import com.parcelinc.parcelapp.pojo.Pagamento;
 
 public class DespesaDataBase implements DataBase<Despesa> {
 
@@ -21,16 +19,20 @@ public class DespesaDataBase implements DataBase<Despesa> {
 
 	private SQLiteDatabase db;
 
+	public static final String[] COLUMNS = new String[] {
+			DBHelper.DATABASE_ID_FIELD, DBHelper.DATABASE_NAME_FIELD,
+			DBHelper.DATABASE_ID_CONTA };
+
 	private DespesaDataBase() {
 		// Do nothing
 	}
 
 	/**
-	 * Get ContaDataBase instance
+	 * Get DespesaDataBase instance
 	 * 
 	 * @param ctx
 	 *            Context
-	 * @return The ContaDataBase instance.
+	 * @return The DespesaDatabase instance.
 	 */
 	public static DespesaDataBase getInstance(Context ctx) {
 		if (instance.db == null || !instance.db.isOpen()) {
@@ -45,8 +47,7 @@ public class DespesaDataBase implements DataBase<Despesa> {
 
 		ContentValues values = new ContentValues();
 		values.put(DBHelper.DATABASE_NAME_FIELD, despesa.getNome());
-		values.put(DBHelper.DATABASE_ID_CONTA, despesa.getConta().getId());
-		
+		values.put(DBHelper.DATABASE_ID_CONTA, despesa.getIdConta());
 
 		try {
 			db.beginTransaction();
@@ -62,35 +63,34 @@ public class DespesaDataBase implements DataBase<Despesa> {
 		return retValue;
 	}
 	
-	public long insert(Despesa despesa, int qntd, double valor, long idUsuario, Date dtPagamento) {
-		long idDespesa = insert(despesa);
-
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(dtPagamento);
-
+	public long insert(Despesa despesa, int qntd, double valor, long idUsuario, Calendar calPagamento) {
+		long idDespesa = -1;
 		ContentValues values = new ContentValues();
 		try {
 			db.beginTransaction();
+
+			idDespesa = insert(despesa);
+
 			for (int i = 0; i < qntd; i++) {
 				values.clear();
 
 				values.put(DBHelper.DATABASE_ID_DESPESA, idDespesa);
 				values.put(DBHelper.DATABASE_ID_USUARIO, idUsuario);
 				values.put(DBHelper.DATABASE_VALUE_FIELD, valor);
-				values.put(DBHelper.DATABASE_DATE_FIELD, DateUtil.getDate(cal));
+				values.put(DBHelper.DATABASE_DATE_FIELD, DateUtil.getDate(calPagamento));
 
-				cal.add(Calendar.MONTH, 1);
-				
+				calPagamento.add(Calendar.MONTH, 1);
+
 				db.insert(DBHelper.TBL_PAGAMENTOS, null, values);
 			}
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
 		}
-		
+
 		return idDespesa;
 	}
-	
+
 	@Override
 	public long update(Despesa despesa) {
 		long retValue = -1;
@@ -129,10 +129,8 @@ public class DespesaDataBase implements DataBase<Despesa> {
 	@Override
 	public Despesa get(long id) {
 		Despesa despesa = null;
-		String[] columns = new String[] { DBHelper.DATABASE_ID_FIELD,
-				DBHelper.DATABASE_NAME_FIELD };
 
-		Cursor c = db.query(DBHelper.TBL_DESPESAS, columns,
+		Cursor c = db.query(DBHelper.TBL_DESPESAS, COLUMNS,
 				DBHelper.DATABASE_ID_FIELD + "=?",
 				new String[] { String.format("%d", id) }, null, null,
 				DBHelper.DATABASE_ID_FIELD);
@@ -140,11 +138,6 @@ public class DespesaDataBase implements DataBase<Despesa> {
 		c.moveToFirst();
 		if (!c.isAfterLast()) {
 			despesa = fillDespesa(c);
-			
-			Map<Long, List<Long>> mapa = listarRelacao(despesa.getId(), null);
-			for (Long idPagamento : mapa.get(despesa.getId())) {
-				despesa.addPagamento(new Pagamento(idPagamento));
-			}
 		}
 
 		return despesa;
@@ -152,20 +145,15 @@ public class DespesaDataBase implements DataBase<Despesa> {
 
 	public List<Despesa> getList() {
 		List<Despesa> list = new ArrayList<Despesa>();
-		String[] cols = new String[] { DBHelper.DATABASE_ID_FIELD,
-				DBHelper.DATABASE_NAME_FIELD };
-		Cursor cr = db.query(DBHelper.TBL_DESPESAS, cols, null, null, null,
+		Cursor cr = db.query(DBHelper.TBL_DESPESAS, COLUMNS, null, null, null,
 				null, DBHelper.DATABASE_NAME_FIELD);
 
 		Map<Long, List<Long>> mapa = listarRelacao(null, null);
-		
+
 		cr.moveToFirst();
 		while (!cr.isAfterLast()) {
-			Despesa despesa = fillDespesa(cr);
-			for (Long idPagamento : mapa.get(despesa.getId())) {
-				despesa.addPagamento(new Pagamento(idPagamento));
-			}
-			
+			Despesa despesa = fillDespesa(cr, mapa);
+
 			list.add(despesa);
 			cr.moveToNext();
 		}
@@ -174,8 +162,12 @@ public class DespesaDataBase implements DataBase<Despesa> {
 
 	/**
 	 * Retorna a lista dos IDs de Pagamento de uma Despesa no mês de referência
-	 * @param idDespesa ID da Despesa para filtrar
-	 * @param filtroMes Ano e Mês para filtro, conforme {@link DateUtil#getFilterMonth(String, int)}
+	 * 
+	 * @param idDespesa
+	 *            ID da Despesa para filtrar
+	 * @param filtroMes
+	 *            Ano e Mês para filtro, conforme
+	 *            {@link DateUtil#getFilterMonth(String, int)}
 	 * @return Lista de IDs de Pagamento
 	 */
 	public List<Long> getListaPagamentos(Long idDespesa, String filtroMes) {
@@ -185,8 +177,9 @@ public class DespesaDataBase implements DataBase<Despesa> {
 
 	private Map<Long, List<Long>> listarRelacao(Long idDespesa, String filtroMes) {
 		Map<Long, List<Long>> mapa = new HashMap<Long, List<Long>>();
-		
-		String[] cols = new String[] { DBHelper.DATABASE_ID_DESPESA, DBHelper.DATABASE_ID_FIELD };
+
+		String[] cols = new String[] { DBHelper.DATABASE_ID_DESPESA,
+				DBHelper.DATABASE_ID_FIELD };
 		StringBuilder where = new StringBuilder();
 		List<String> params = new ArrayList<String>();
 
@@ -194,7 +187,7 @@ public class DespesaDataBase implements DataBase<Despesa> {
 			where.append(DBHelper.DATABASE_ID_DESPESA).append(" = ?");
 			params.add(String.format("%d", idDespesa));
 		}
-		
+
 		if (filtroMes != null && "".equals(filtroMes.trim())) {
 			if (where.length() > 0) {
 				where.append(" and ");
@@ -207,15 +200,15 @@ public class DespesaDataBase implements DataBase<Despesa> {
 		if (params.size() > 1) {
 			paramsArray = params.toArray(new String[params.size()]);
 		}
-		
-		Cursor cr = db.query(DBHelper.TBL_PAGAMENTOS, cols, where.toString(), paramsArray, null,
-				null, DBHelper.DATABASE_DATE_FIELD);
+
+		Cursor cr = db.query(DBHelper.TBL_PAGAMENTOS, cols, where.toString(),
+				paramsArray, null, null, DBHelper.DATABASE_DATE_FIELD);
 
 		cr.moveToFirst();
 		while (!cr.isAfterLast()) {
 			Long idDespesaTmp = cr.getLong(0);
 			Long idPagamentoTmp = cr.getLong(1);
-			
+
 			List<Long> lista = mapa.get(idDespesaTmp);
 			if (lista == null) {
 				lista = new ArrayList<Long>();
@@ -224,29 +217,40 @@ public class DespesaDataBase implements DataBase<Despesa> {
 			if (!lista.contains(idPagamentoTmp)) {
 				lista.add(idPagamentoTmp);
 			}
-			
+
 			mapa.put(idDespesaTmp, lista);
 
 			cr.moveToNext();
 		}
-		
+
 		return mapa;
 	}
 
 	public List<Despesa> getList(Long idConta, String filtroMes) {
 		filtroMes = filtroMes + DateUtil.SEPARATOR;
 
-		
-		// TODO filtrar despesa 
+		// TODO filtrar despesa
 		return null;
 	}
-	
-	private Despesa fillDespesa(Cursor c) {
-		Long id = c.getLong(c.getColumnIndex(DBHelper.DATABASE_ID_FIELD));
-		String nome = c.getString(c
-				.getColumnIndex(DBHelper.DATABASE_NAME_FIELD));
 
-		return new Despesa(id, nome, null, null);
+	private Despesa fillDespesa(Cursor c) {
+		Long id = c.getLong(0);
+
+		return fill(c, id, getListaPagamentos(id, null));
 	}
+
+	private Despesa fillDespesa(Cursor c, Map<Long, List<Long>> mapaIdsPagamento) {
+		Long id = c.getLong(0);
+
+		return fill(c, id, mapaIdsPagamento.get(id));
+	}
+	
+	private Despesa fill(Cursor c, Long id, List<Long> idsPagamento) {
+		String nome = c.getString(1);
+		Long idConta = c.getLong(2);
+
+		return new Despesa(id, nome, idConta, idsPagamento);
+	}
+	
 
 }

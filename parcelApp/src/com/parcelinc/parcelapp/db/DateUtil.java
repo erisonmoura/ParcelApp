@@ -32,4 +32,8 @@ public class DateUtil {
 		return formatNumber(month + 1);
 	}
 
+	public static String toString(Calendar c) {
+		return formatNumber(c.get(Calendar.DAY_OF_MONTH)) + "/" + getMonth(c)
+				+ "/" + formatNumber(c.get(Calendar.YEAR));
+	}
 }

@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnLongClickListener;
+import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +28,8 @@ public class ListarDespesa extends Activity {
 
 	public static final String PARAM_CONTA = "conta";
 	public static final String PARAM_MES_REF = "mes_ref";
+
+	private static final int OPR_NOVA_DESPESA = 1;
 
 	Context contexto;
 
@@ -50,6 +57,21 @@ public class ListarDespesa extends Activity {
 		return dbPagamento;
 	}
 	
+	private class OnClickExcuir implements OnClickListener {
+
+		private Despesa despesa;
+
+		public OnClickExcuir(Despesa despesa) {
+			this.despesa = despesa;
+		}
+		
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			getDbDespesa().remove(despesa);
+			carregarDespesas();
+		}
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -69,21 +91,57 @@ public class ListarDespesa extends Activity {
 		txtConta = (TextView) findViewById(R.id.txtTituloListaDespesa);
 		txtConta.setText(getString(R.string.lbl_despesa_conta, conta.getNome()));
 
-		// usuariosConta = new ArrayList<Usuario>(conta.getUsuarios());
-
 		carregarDespesas();
+	}
+
+	private class OnLongClick implements OnLongClickListener {
+
+		private TextView txt ;
+		private Despesa despesa;
+		private EditText edt;
+		
+		@Override
+		public boolean onLongClick(View v) {
+			txt = (TextView) v;
+			despesa = (Despesa) txt.getTag();
+
+			edt = new EditText(contexto);
+			edt.setHint(R.string.lbl_despesa);
+			edt.setText(despesa.getNome());
+			
+			AlertDialog dialogo = new AlertDialog.Builder(contexto)
+				.setTitle(R.string.lbl_despesa)
+				.setView(edt)
+				.setPositiveButton("Confirmar", new OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						despesa.setNome(edt.getText().toString());
+						txt.setText(despesa.getNome());
+					}
+				})
+				.setNegativeButton("Cancelar", null)
+				.create();
+			
+			dialogo.show();
+			
+			return true;
+		}
 	}
 	
 	private void carregarDespesas() {
 		List<Despesa> lista = getDbDespesa().getList(conta.getId(), filtro);
-		if (lista.isEmpty()) {
+		if (lista == null || lista.isEmpty()) {
 			Toast.makeText(contexto, R.string.msg_sem_dados, Toast.LENGTH_LONG).show();
 			return;
 		}
+		
+		OnLongClick longClick = new OnLongClick();
 
 		for (Despesa despesa : lista) {
 	        View linha = LayoutInflater.from(contexto).inflate(R.layout.linha_despesa, tabela, false);
 	        linha.setTag(despesa);
+	        linha.setOnLongClickListener(longClick);
 
 	        TextView txtDespesa = (TextView) linha.findViewById(R.id.txtRowDespesa);
 	        txtDespesa.setText(despesa.getNome());
@@ -100,8 +158,8 @@ public class ListarDespesa extends Activity {
 		
 		List<Long> idsPagamento = getDbDespesa().getListaPagamentos(despesa.getId(), filtro);
 		// Esta contagem só funcionará se a lista de Pagamentos vier ordenada por Data
-		for (int i = 0; i < despesa.getPagamentos().size(); i++) {
-			Long id = despesa.getPagamentos().get(i).getId();
+		for (int i = 0; i < despesa.getIdsPagamento().size(); i++) {
+			Long id = despesa.getIdsPagamento().get(i);
 
 			for (Long idPgto : idsPagamento) {
 				if (id.equals(idPgto)) {
@@ -114,9 +172,62 @@ public class ListarDespesa extends Activity {
 		}
 		
 		sb.append("/");
-		sb.append(despesa.getPagamentos().size());
+		sb.append(despesa.getIdsPagamento().size());
 
 		return sb.toString();
 	}
+	
+	public void alterarDespesa(View view) {
+		Despesa despesa = (Despesa) view.getTag();
+		/*
+		 * Novo botão (pensar na imagem) para criar um novo pagamento direto
+		 * 
+		 *  
+		 */
+	}
+	
+	public void novaDespesa(View view) {
+		Intent it = new Intent(contexto, ManterDespesa.class);
+		it.putExtra(ManterDespesa.PARAM_CONTA, conta);
 
+		startActivityForResult(it, OPR_NOVA_DESPESA);
+	}
+
+	public void excluirDespesa(View view) {
+		Despesa despesa = (Despesa) view.getTag();
+		confirmarExclusao(despesa);
+	}
+
+	private void confirmarExclusao(Despesa despesa) {
+		OnClickExcuir onclick = new OnClickExcuir(despesa);
+		
+		String msg = getString(R.string.msg_confirmar_exclusao, " a despesa " + despesa);
+
+		AlertDialog alert = new AlertDialog.Builder(this)
+				.setTitle(R.string.title_confirmar).setMessage(msg)
+				.setPositiveButton("Sim", onclick)
+				.setNegativeButton("Não", null).create();
+		alert.show();
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		switch (requestCode) {
+		case OPR_NOVA_DESPESA:
+//		case OPR_AUTO:
+//		case OPR_ALT:
+			if (resultCode == RESULT_FIRST_USER) {
+				carregarDespesas();
+			}
+			break;
+
+		default:
+			// Não precisa realizar operação
+			break;
+		}
+	}
+	
+	
 }

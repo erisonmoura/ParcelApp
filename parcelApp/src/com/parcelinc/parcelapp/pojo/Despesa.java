@@ -11,24 +11,27 @@ public class Despesa implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	// TODO Tratar apenas a lista de IDs dos Pagamentos
 	
 	private Long id;
 	private String nome;
-	private Conta conta;
-	private List<Pagamento> pagamentos = new ArrayList<Pagamento>(0);
+	private Long idConta;
+	private List<Long> idsPagamento = new ArrayList<Long>(0);
 
-	public Despesa(Long id, String nome, Conta conta, List<Pagamento> pagamentos) {
+	public Despesa(Long id, String nome, Long idConta, List<Long> idsPagamento) {
 		super();
 		this.id = id;
 		this.nome = nome;
-		this.conta = conta;
-		setPagamentos(pagamentos);
+		this.idConta = idConta;
+		setIdsPagamento(idsPagamento);
 	}
 
-	public Despesa(String nome, Conta conta, List<Pagamento> pagamentos) {
-		this(null, nome, conta, pagamentos);
+	public Despesa(String nome, Long idConta, List<Long> idsPagamento) {
+		this(null, nome, idConta, idsPagamento);
+	}
 
+	@Override
+	public String toString() {
+		return getNome();
 	}
 
 	public Long getId() {
@@ -47,29 +50,29 @@ public class Despesa implements Serializable {
 		this.nome = nome;
 	}
 
-	public Conta getConta() {
-		return conta;
+	public Long getIdConta() {
+		return idConta;
 	}
 
-	public void setConta(Conta conta) {
-		this.conta = conta;
+	public void setIdConta(Long idConta) {
+		this.idConta = idConta;
 	}
 
-	public List<Pagamento> getPagamentos() {
-		return Collections.unmodifiableList(pagamentos);
+	public List<Long> getIdsPagamento() {
+		return Collections.unmodifiableList(idsPagamento);
 	}
 
-	public void setPagamentos(List<Pagamento> pagamentos) {
-		this.pagamentos.clear();
-		addAllPagamento(pagamentos);
+	public void setIdsPagamento(List<Long> idsPagamento) {
+		this.idsPagamento.clear();
+		addAllIdsPagamento(idsPagamento);
 	}
 
-	public boolean addAllPagamento(List<Pagamento> pagamentos) {
-		return (pagamentos != null) ? this.pagamentos.addAll(pagamentos) : true;
+	public boolean addAllIdsPagamento(List<Long> idsPagamento) {
+		return (idsPagamento != null) ? this.idsPagamento.addAll(idsPagamento) : true;
 	}
 
-	public boolean addPagamento(Pagamento pagamento) {
-		return this.pagamentos.add(pagamento);
+	public boolean addIdPagamento(Long idPagamento) {
+		return this.idsPagamento.add(idPagamento);
 	}
 
 }
