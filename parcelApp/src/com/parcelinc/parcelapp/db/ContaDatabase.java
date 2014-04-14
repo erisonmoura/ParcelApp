@@ -75,7 +75,7 @@ public class ContaDatabase implements DataBase<Conta> {
 		return retValue;
 	}
 
-	// TODO implementar update do relacionamento contas-usuarios
+	
 	@Override
 	public long update(Conta conta) {
 		long retValue = -1;
@@ -88,16 +88,9 @@ public class ContaDatabase implements DataBase<Conta> {
 			retValue = db.update(DBHelper.TBL_CONTAS, values,
 					DBHelper.DATABASE_ID_FIELD + "=?",
 					new String[] { String.valueOf(conta.getId()) });
-			if (retValue != -1) {
-				db.setTransactionSuccessful();
-			}
-		} finally {
-			db.endTransaction();
 
-		}
-		if (retValue > 0) {
-			try {
-				db.beginTransaction();
+			if (retValue > 0) {
+
 				StringBuilder idsUsuarios = new StringBuilder();
 				for (int i = 0; i + 1 < conta.getIdsUsuario().size(); i++) {
 
@@ -111,17 +104,8 @@ public class ContaDatabase implements DataBase<Conta> {
 						+ String.valueOf(conta.getId()) + " AND "
 						+ DBHelper.DATABASE_ID_USUARIO + " NOT IN ( "
 						+ idsUsuarios + ")");
+
 				
-				db.setTransactionSuccessful();				
-
-			} finally {
-				db.endTransaction();
-
-			}
-		}
-		if (retValue > 0) {
-			try {
-				db.beginTransaction();
 				for (int i = 0; i < conta.getIdsUsuario().size(); i++) {
 
 					values.clear();
@@ -133,10 +117,10 @@ public class ContaDatabase implements DataBase<Conta> {
 							values);
 				}
 				db.setTransactionSuccessful();
-			} finally {
-				db.endTransaction();
 			}
 
+		} finally {
+			db.endTransaction();
 		}
 
 		return retValue;
