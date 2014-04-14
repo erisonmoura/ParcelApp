@@ -96,7 +96,7 @@ public static final String DATABASE_DATE_FIELD = "DATA";
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int arg1, int arg2) {
-		// TODO Auto-generated method stub
+		// Implementar caso haja mudanças no modelo de dados
 
 	}
 

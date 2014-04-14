@@ -144,8 +144,8 @@ public class PagamentoDataBase implements DataBase<Pagamento> {
 		filtroMes = filtroMes + DateUtil.SEPARATOR;
 
 		/*
-		 * TODO Cada parâmetro pode ser opcional Deve ordenar por: Data, Nome da
-		 * Despesa, e Nome do Usuário
+		 * TODO Cada parâmetro pode ser opcional
+		 * <br /> Deve ordenar por: Data, Nome da Despesa, e Nome do Usuário
 		 */
 		return null;
 	}

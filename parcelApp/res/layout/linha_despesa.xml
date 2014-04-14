@@ -1,42 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tableRowInflate"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <ImageView
-        android:id="@+id/imgEdit"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:contentDescription="@string/mnu_alterar"
-        android:onClick="alterarDespesa"
-        android:src="@drawable/img_edit" />
+        android:layout_weight="1" >
 
-    <ImageView
-        android:id="@+id/imgTrash"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:contentDescription="@string/mnu_excluir"
-        android:onClick="excluirDespesa"
-        android:src="@drawable/img_trash" />
+        <ImageView
+            android:id="@+id/imgEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:contentDescription="@string/mnu_alterar"
+            android:onClick="alterarDespesa"
+            android:src="@drawable/img_edit" />
 
-    <TextView
-        android:id="@+id/txtRowDespesa"
-        style="@style/CellText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="3"
-        android:longClickable="true"
-        android:text="Medium"
-        android:textStyle="italic" />
+        <ImageView
+            android:id="@+id/imgTrash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:contentDescription="@string/mnu_excluir"
+            android:onClick="excluirDespesa"
+            android:src="@drawable/img_trash" />
+
+        <TextView
+            android:id="@+id/txtRowDespesa"
+            style="@style/CellText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:text="Medium"
+            android:textStyle="italic" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/txtRowQuant"
         style="@style/CellText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:gravity="right"
         android:text="Text" />
 

@@ -36,6 +36,8 @@ public class OperacaoConta extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.conta_operacao);
 
+		contexto = this;
+		
 		Intent it = getIntent();
 		conta = (Conta) it.getSerializableExtra(PARAM_CONTA);
 		

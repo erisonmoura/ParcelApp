@@ -1,12 +1,14 @@
 package com.parcelinc.parcelapp.activity;
 
-import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -14,12 +16,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.parcelinc.parcelapp.R;
-import com.parcelinc.parcelapp.db.DateUtil;
 import com.parcelinc.parcelapp.db.DespesaDataBase;
 import com.parcelinc.parcelapp.db.PagamentoDataBase;
+import com.parcelinc.parcelapp.db.UsuarioDataBase;
 import com.parcelinc.parcelapp.pojo.Conta;
 import com.parcelinc.parcelapp.pojo.Despesa;
 import com.parcelinc.parcelapp.pojo.Usuario;
+import com.parcelinc.parcelapp.util.OnClickDate;
 
 public class ManterDespesa extends Activity {
 
@@ -33,11 +36,13 @@ public class ManterDespesa extends Activity {
 	private SparseArray<EditText> campos;
 	private Spinner spnUser;
 	private TextView txtData;
+	
+	private OnClickDate clickDate;
 
 	private Conta conta;
-	private Calendar calendario;
 	
 	private DespesaDataBase dbDespesa;
+	private UsuarioDataBase dbUsuario;
 	private PagamentoDataBase dbPagamento;
 
 	public DespesaDataBase getDbDespesa() {
@@ -45,6 +50,13 @@ public class ManterDespesa extends Activity {
 			dbDespesa = DespesaDataBase.getInstance(contexto);
 		}
 		return dbDespesa;
+	}
+	
+	public UsuarioDataBase getDbUsuario() {
+		if (dbUsuario == null) {
+			dbUsuario = UsuarioDataBase.getInstance(contexto);
+		}
+		return dbUsuario;
 	}
 	
 	public PagamentoDataBase getDbPagamento() {
@@ -61,13 +73,31 @@ public class ManterDespesa extends Activity {
 		
 		contexto = this;
 
+		conta = (Conta) getIntent().getSerializableExtra(PARAM_CONTA);
+		
 		chkRepeat = (CheckBox) findViewById(R.id.chkRecorrente);
 		layoutRepeat = (LinearLayout) findViewById(R.id.layoutRecorrente);
-		clickRecorrente(chkRepeat);
 		
 		spnUser = (Spinner) findViewById(R.id.spnUser);
 		txtData = (TextView) findViewById(R.id.txtData);
+
+		clickRecorrente(chkRepeat);
 		
+		List<Usuario> usuariosValidos = new ArrayList<Usuario>();
+		for (Usuario usuario : getDbUsuario().getList()) {
+			for(Long idUsuario : conta.getIdsUsuario()) {
+				if (usuario.getId().equals(idUsuario)) {
+					usuariosValidos.add(usuario);
+				}
+			}
+		}
+		
+		ArrayAdapter<Usuario> adapter = new ArrayAdapter<Usuario>(this,
+		          android.R.layout.simple_spinner_item, usuariosValidos);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spnUser.setAdapter(adapter);
+
+
 		campos = new SparseArray<EditText>();
 
 		EditText campo = (EditText) findViewById(R.id.edtNome);
@@ -82,10 +112,7 @@ public class ManterDespesa extends Activity {
 		campo = (EditText) findViewById(R.id.edtData);
 		campos.append(R.id.edtData, campo);
 
-		Calendar c = Calendar.getInstance();
-		campo.setText(DateUtil.toString(c));
-
-		conta = (Conta) getIntent().getSerializableExtra(PARAM_CONTA);
+		clickDate = new OnClickDate(contexto, campo);
 
 	}
 
@@ -100,10 +127,6 @@ public class ManterDespesa extends Activity {
 		}
 	}
 
-	public void alterarData(View view) {
-		// TODO Implementar Dialogo com preenchimento da data
-	}
-	
 	public void salvarDespesa(View view) {
 		String nome = campos.get(R.id.edtNome).getText().toString();
 
@@ -120,7 +143,11 @@ public class ManterDespesa extends Activity {
 		
 		Despesa despesa = new Despesa(nome, conta.getId(), null);
 		
-		getDbDespesa().insert(despesa, qntd, valor, user.getId(), calendario);
+		long result = getDbDespesa().insert(despesa, qntd, valor, user.getId(), clickDate.getCalendar());
+		if (result != -1) {
+			setResult(RESULT_FIRST_USER);
+			finish();
+		}
 	}
 
 }

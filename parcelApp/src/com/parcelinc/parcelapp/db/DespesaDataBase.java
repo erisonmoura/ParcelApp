@@ -63,7 +63,8 @@ public class DespesaDataBase implements DataBase<Despesa> {
 		return retValue;
 	}
 
-	public long insert(Despesa despesa, int qntd, double valor, long idUsuario, Calendar calPagamento) {
+	public long insert(Despesa despesa, int qntd, double valor, long idUsuario,
+			Calendar calPagamento) {
 		long idDespesa = -1;
 
 		ContentValues values = new ContentValues();
@@ -78,7 +79,8 @@ public class DespesaDataBase implements DataBase<Despesa> {
 				values.put(DBHelper.DATABASE_ID_DESPESA, idDespesa);
 				values.put(DBHelper.DATABASE_ID_USUARIO, idUsuario);
 				values.put(DBHelper.DATABASE_VALUE_FIELD, valor);
-				values.put(DBHelper.DATABASE_DATE_FIELD, DateUtil.getDate(calPagamento));
+				values.put(DBHelper.DATABASE_DATE_FIELD,
+						DateUtil.getDate(calPagamento));
 
 				calPagamento.add(Calendar.MONTH, 1);
 
@@ -189,12 +191,12 @@ public class DespesaDataBase implements DataBase<Despesa> {
 			params.add(String.format("%d", idDespesa));
 		}
 
-		if (filtroMes != null && "".equals(filtroMes.trim())) {
+		if (filtroMes != null && !("".equals(filtroMes.trim()))) {
 			if (where.length() > 0) {
 				where.append(" and ");
 			}
 			where.append(DBHelper.DATABASE_DATE_FIELD).append(" like ?");
-			params.add("%" + filtroMes + "-%");
+			params.add(prepareFiltro(filtroMes));
 		}
 
 		String[] paramsArray = null;
@@ -227,11 +229,42 @@ public class DespesaDataBase implements DataBase<Despesa> {
 		return mapa;
 	}
 
-	public List<Despesa> getList(Long idConta, String filtroMes) {
-		filtroMes = filtroMes + DateUtil.SEPARATOR;
+	private String prepareFiltro(String filtroMes) {
+		return "%" + filtroMes.trim() + DateUtil.SEPARATOR + "%";
+	}
 
-		// TODO filtrar despesa
-		return null;
+	public List<Despesa> getList(Long idConta, String filtroMes) {
+
+		List<Despesa> list = new ArrayList<Despesa>();
+
+		String despesaTbl = DBHelper.TBL_DESPESAS;
+		String pagamentoTbl = DBHelper.TBL_PAGAMENTOS;
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT DISTINCT ").append(despesaTbl).append(".").append(COLUMNS[0]);
+		sql.append(", ").append(despesaTbl).append(".").append(COLUMNS[1]);
+		sql.append(", ").append(despesaTbl).append(".").append(COLUMNS[2]);
+		sql.append(" FROM ").append(despesaTbl).append(", ").append(pagamentoTbl);
+		sql.append(" WHERE ").append(despesaTbl).append(".").append(COLUMNS[0]);
+		sql.append("=").append(pagamentoTbl).append(".").append(DBHelper.DATABASE_ID_DESPESA);
+		sql.append(" and ").append(despesaTbl).append(".").append(COLUMNS[2]).append("=? ");
+		sql.append(" and ").append(pagamentoTbl).append(".").append(DBHelper.DATABASE_DATE_FIELD).append(" like ? ");
+		sql.append(" order by ").append(despesaTbl).append(".").append(COLUMNS[1]);
+		
+		String[] params = new String[] { String.format("%d", idConta), prepareFiltro(filtroMes) };
+		
+		Cursor cr = db.rawQuery(sql.toString(), params);
+
+		Map<Long, List<Long>> mapa = listarRelacao(null, null);
+
+		cr.moveToFirst();
+		while (!cr.isAfterLast()) {
+			Despesa despesa = fillDespesa(cr, mapa);
+
+			list.add(despesa);
+			cr.moveToNext();
+		}
+		return list;
 	}
 
 	private Despesa fillDespesa(Cursor c) {
@@ -245,13 +278,12 @@ public class DespesaDataBase implements DataBase<Despesa> {
 
 		return fill(c, id, mapaIdsPagamento.get(id));
 	}
-	
+
 	private Despesa fill(Cursor c, Long id, List<Long> idsPagamento) {
 		String nome = c.getString(1);
 		Long idConta = c.getLong(2);
 
 		return new Despesa(id, nome, idConta, idsPagamento);
 	}
-	
 
 }
