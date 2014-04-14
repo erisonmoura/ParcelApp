@@ -84,7 +84,7 @@ public class RelatorioFechamento extends Activity {
 	        txt = (TextView) linha.findViewById(R.id.txtRowPgto);
 	        Util.setTextUnderline(txt, String.format("%.3f", fechamento.getTotalPagamento(usuario)));
 			txt.setTag(fechamento.getPagamentos(usuario));
-			//txt.setOnClickListener(clickNome);
+			//txt.setOnClickListener(clickNome); // TODO implementar click
 
 			txt = (TextView) linha.findViewById(R.id.txtRowSaldo);
 			txt.setText(String.format("%.3f", fechamento.getSaldo(usuario)));

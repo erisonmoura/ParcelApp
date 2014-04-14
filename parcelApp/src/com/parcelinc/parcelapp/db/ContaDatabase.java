@@ -101,9 +101,7 @@ public class ContaDatabase implements DataBase<Conta> {
 
 				db.execSQL("DELETE FROM " + DBHelper.TBL_CONTAS_USUARIOS
 						+ " WHERE " + DBHelper.DATABASE_ID_CONTA + " = "
-						+ String.valueOf(conta.getId()) + " AND "
-						+ DBHelper.DATABASE_ID_USUARIO + " NOT IN ( "
-						+ idsUsuarios + ")");
+						+ String.valueOf(conta.getId()));
 
 				
 				for (int i = 0; i < conta.getIdsUsuario().size(); i++) {
