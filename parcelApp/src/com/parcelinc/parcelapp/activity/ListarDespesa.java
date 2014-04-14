@@ -1,6 +1,5 @@
 package com.parcelinc.parcelapp.activity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -10,8 +9,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -25,6 +22,7 @@ import com.parcelinc.parcelapp.db.DespesaDataBase;
 import com.parcelinc.parcelapp.db.PagamentoDataBase;
 import com.parcelinc.parcelapp.pojo.Conta;
 import com.parcelinc.parcelapp.pojo.Despesa;
+import com.parcelinc.parcelapp.util.Util;
 
 public class ListarDespesa extends Activity {
 
@@ -37,7 +35,6 @@ public class ListarDespesa extends Activity {
 
 	TextView txtConta;
 	TableLayout tabela;
-	List<Despesa> listaDespesa;
 
 	Conta conta;
 	String filtro;
@@ -85,8 +82,6 @@ public class ListarDespesa extends Activity {
 
 		Intent it = getIntent();
 
-		listaDespesa = new ArrayList<Despesa>();
-
 		conta = (Conta) it.getSerializableExtra(PARAM_CONTA);
 		filtro = it.getStringExtra(PARAM_MES_REF);
 
@@ -118,7 +113,7 @@ public class ListarDespesa extends Activity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							despesa.setNome(edt.getText().toString());
-							setTextUnderline(txt, despesa.getNome());
+							Util.setTextUnderline(txt, despesa.getNome());
 						}
 					}).setNegativeButton("Cancelar", null).create();
 
@@ -147,7 +142,7 @@ public class ListarDespesa extends Activity {
 	        btnTrash.setTag(despesa);
 
 	        TextView txtDsp = (TextView) linha.findViewById(R.id.txtRowDespesa);
-			setTextUnderline(txtDsp, despesa.getNome());
+			Util.setTextUnderline(txtDsp, despesa.getNome());
 			txtDsp.setTag(despesa);
 			txtDsp.setOnClickListener(clickNome);
 
@@ -158,12 +153,6 @@ public class ListarDespesa extends Activity {
 		}
 	}
 	
-	private static void setTextUnderline(TextView text, String conteudo) {
-		SpannableString nomeDespesa = new SpannableString(conteudo);
-		nomeDespesa.setSpan(new UnderlineSpan(), 0, nomeDespesa.length(), 0);			
-		text.setText(nomeDespesa);
-	}
-
 	private String getQuantidades(Despesa despesa) {
 		StringBuilder sb = new StringBuilder();
 

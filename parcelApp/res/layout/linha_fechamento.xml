@@ -21,7 +21,7 @@
         android:clickable="true"
         android:gravity="right"
         android:text="Text"
-        android:textColor="#00D0A0" />
+        android:textStyle="italic" />
 
     <TextView
         android:id="@+id/txtRowSaldo"
