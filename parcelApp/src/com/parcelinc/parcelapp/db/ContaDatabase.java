@@ -61,7 +61,8 @@ public class ContaDatabase implements DataBase<Conta> {
 			db.beginTransaction();
 			for (int i = 0; i < conta.getIdsUsuario().size(); i++) {
 				cv.clear();
-				cv.put(DBHelper.DATABASE_ID_USUARIO, conta.getIdsUsuario().get(i));
+				cv.put(DBHelper.DATABASE_ID_USUARIO,
+						conta.getIdsUsuario().get(i));
 				cv.put(DBHelper.DATABASE_ID_CONTA, retValue);
 
 				db.insert(DBHelper.TBL_CONTAS_USUARIOS, null, cv);
@@ -80,7 +81,7 @@ public class ContaDatabase implements DataBase<Conta> {
 		long retValue = -1;
 
 		ContentValues values = new ContentValues();
-		values.put(DBHelper.DATABASE_ID_FIELD, conta.getId());
+		values.put(DBHelper.DATABASE_NAME_FIELD, conta.getNome());
 
 		try {
 			db.beginTransaction();
@@ -92,6 +93,50 @@ public class ContaDatabase implements DataBase<Conta> {
 			}
 		} finally {
 			db.endTransaction();
+
+		}
+		if (retValue > 0) {
+			try {
+				db.beginTransaction();
+				StringBuilder idsUsuarios = new StringBuilder();
+				for (int i = 0; i + 1 < conta.getIdsUsuario().size(); i++) {
+
+					idsUsuarios.append(conta.getIdsUsuario().get(i) + ",");
+				}
+				idsUsuarios.append(conta.getIdsUsuario().get(
+						conta.getIdsUsuario().size() - 1));
+
+				db.execSQL("DELETE FROM " + DBHelper.TBL_CONTAS_USUARIOS
+						+ " WHERE " + DBHelper.DATABASE_ID_CONTA + " = "
+						+ String.valueOf(conta.getId()) + " AND "
+						+ DBHelper.DATABASE_ID_USUARIO + " NOT IN ( "
+						+ idsUsuarios + ")");
+				
+				db.setTransactionSuccessful();				
+
+			} finally {
+				db.endTransaction();
+
+			}
+		}
+		if (retValue > 0) {
+			try {
+				db.beginTransaction();
+				for (int i = 0; i < conta.getIdsUsuario().size(); i++) {
+
+					values.clear();
+					values.put(DBHelper.DATABASE_ID_USUARIO, conta
+							.getIdsUsuario().get(i));
+					values.put(DBHelper.DATABASE_ID_CONTA, conta.getId());
+
+					retValue = db.insert(DBHelper.TBL_CONTAS_USUARIOS, null,
+							values);
+				}
+				db.setTransactionSuccessful();
+			} finally {
+				db.endTransaction();
+			}
+
 		}
 
 		return retValue;
@@ -169,7 +214,7 @@ public class ContaDatabase implements DataBase<Conta> {
 		while (!cr.isAfterLast()) {
 			Long idContaTmp = cr.getLong(0);
 			Long idUserTmp = cr.getLong(1);
-			
+
 			List<Long> lista = mapa.get(idContaTmp);
 			if (lista == null) {
 				lista = new ArrayList<Long>();
@@ -178,7 +223,7 @@ public class ContaDatabase implements DataBase<Conta> {
 			if (!lista.contains(idUserTmp)) {
 				lista.add(idUserTmp);
 			}
-			
+
 			mapa.put(idContaTmp, lista);
 
 			cr.moveToNext();
