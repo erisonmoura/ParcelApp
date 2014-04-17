@@ -64,7 +64,8 @@ public class UsuarioDataBase implements DataBase<Usuario> {
 		long retValue = -1;
 
 		ContentValues values = new ContentValues();
-		values.put(DBHelper.DATABASE_ID_FIELD, usuario.getId());
+		values.put(DBHelper.DATABASE_NAME_FIELD, usuario.getNome());
+		values.put(DBHelper.DATABASE_OBS_FIELD, usuario.getObs());
 
 		try {
 			db.beginTransaction();
