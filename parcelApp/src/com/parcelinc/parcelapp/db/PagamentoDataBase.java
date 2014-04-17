@@ -80,7 +80,7 @@ public class PagamentoDataBase implements DataBase<Pagamento> {
 
 		try {
 			db.beginTransaction();
-			retValue = db.update(DBHelper.TBL_CONTAS, values,
+			retValue = db.update(DBHelper.TBL_PAGAMENTOS, values,
 					DBHelper.DATABASE_ID_FIELD + "=?",
 					new String[] { String.valueOf(pagamento.getId()) });
 			if (retValue != -1) {
@@ -157,14 +157,9 @@ public class PagamentoDataBase implements DataBase<Pagamento> {
 		Long idUsuario = c.getLong(3);
 		double valor = c.getDouble(4);
 
-		Despesa despesa = null;
-		if (idDespesa != null) {
-			despesa = despesaDataBase.get(idDespesa);
-		}
-		Usuario usuario = null;
-		if (idUsuario != null) {
-			usuario = usuarioDataBase.get(idUsuario);
-		}
+		Despesa despesa = despesaDataBase.get(idDespesa);		
+		Usuario usuario = usuarioDataBase.get(idUsuario);
+		
 
 		return new Pagamento(id, despesa, data, usuario, valor);
 	}
