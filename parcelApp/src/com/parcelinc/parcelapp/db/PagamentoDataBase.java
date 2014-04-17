@@ -158,7 +158,7 @@ public class PagamentoDataBase implements DataBase<Pagamento> {
 		double valor = c.getDouble(4);
 
 		Despesa despesa = null;
-		if (idDespesa != 0) {
+		if (idDespesa != null) {
 			despesa = despesaDataBase.get(idDespesa);
 		}
 		Usuario usuario = null;
