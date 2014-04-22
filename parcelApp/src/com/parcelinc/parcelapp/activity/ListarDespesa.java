@@ -30,6 +30,7 @@ public class ListarDespesa extends Activity {
 	public static final String PARAM_MES_REF = "mes_ref";
 
 	private static final int OPR_NOVA_DESPESA = 1;
+	private static final int OPR_ALTERAR_DESPESA = 2;
 
 	Context contexto;
 
@@ -42,18 +43,8 @@ public class ListarDespesa extends Activity {
 	DespesaDataBase dbDespesa;
 	PagamentoDataBase dbPagamento;
 
-	public DespesaDataBase getDbDespesa() {
-		if (dbDespesa == null) {
-			dbDespesa = DespesaDataBase.getInstance(contexto);
-		}
-		return dbDespesa;
-	}
-
-	public PagamentoDataBase getDbPagamento() {
-		if (dbPagamento == null) {
-			dbPagamento = PagamentoDataBase.getInstance(contexto);
-		}
-		return dbPagamento;
+	private DespesaDataBase geDespesaDB() {
+		return DespesaDataBase.getInstance(contexto);
 	}
 
 	private class OnClickExcuir implements OnClickListener {
@@ -66,7 +57,7 @@ public class ListarDespesa extends Activity {
 
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
-			getDbDespesa().remove(despesa);
+			geDespesaDB().remove(despesa);
 			carregarDespesas();
 		}
 	}
@@ -122,7 +113,7 @@ public class ListarDespesa extends Activity {
 	}
 
 	private void carregarDespesas() {
-		List<Despesa> lista = getDbDespesa().getList(conta.getId(), filtro);
+		List<Despesa> lista = geDespesaDB().getList(conta.getId(), filtro);
 		if (lista == null || lista.isEmpty()) {
 			Toast.makeText(contexto, R.string.msg_sem_dados, Toast.LENGTH_LONG)
 					.show();
@@ -156,7 +147,7 @@ public class ListarDespesa extends Activity {
 	private String getQuantidades(Despesa despesa) {
 		StringBuilder sb = new StringBuilder();
 
-		List<Long> idsPagamento = getDbDespesa().getListaPagamentos(
+		List<Long> idsPagamento = geDespesaDB().getListaPagamentos(
 				despesa.getId(), filtro);
 		// Esta contagem só funcionará se a lista de Pagamentos vier ordenada
 		// por Data
@@ -181,17 +172,17 @@ public class ListarDespesa extends Activity {
 
 	public void alterarDespesa(View view) {
 		Despesa despesa = (Despesa) view.getTag();
-		/*
-		 * TODO Implementar listagem dos pagamentos, por padrão filtrar pelo mês
-		 * passado como parâmetro, mas deve deixar exibir tudo.
-		 * 
-		 * Novo botão (pensar na imagem) para criar um novo pagamento direto
-		 */
+		Intent it = new Intent(contexto, AlterarDespesa.class);
+		it.putExtra(AlterarDespesa.PARAM_CONTA, conta);
+		it.putExtra(AlterarDespesa.PARAM_MES_REF, filtro);
+		it.putExtra(AlterarDespesa.PARAM_DESPESA, despesa);
+
+		startActivityForResult(it, OPR_ALTERAR_DESPESA);
 	}
 
 	public void novaDespesa(View view) {
-		Intent it = new Intent(contexto, ManterDespesa.class);
-		it.putExtra(ManterDespesa.PARAM_CONTA, conta);
+		Intent it = new Intent(contexto, NovaDespesa.class);
+		it.putExtra(NovaDespesa.PARAM_CONTA, conta);
 
 		startActivityForResult(it, OPR_NOVA_DESPESA);
 	}
@@ -220,8 +211,7 @@ public class ListarDespesa extends Activity {
 
 		switch (requestCode) {
 		case OPR_NOVA_DESPESA:
-			// case OPR_AUTO:
-			// case OPR_ALT:
+		case OPR_ALTERAR_DESPESA:
 			if (resultCode == RESULT_FIRST_USER) {
 				carregarDespesas();
 			}

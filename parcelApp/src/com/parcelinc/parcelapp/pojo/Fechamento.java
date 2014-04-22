@@ -77,7 +77,7 @@ public class Fechamento<K> {
 		
 		for (K key : getChaves()) {
 			Valores valor = valores.get(key);
-			valor.saldo = valorDevido - valor.pagamentos;
+			valor.saldo = valor.pagamentos - valorDevido;
 		}
 	}
 	

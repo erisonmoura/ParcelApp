@@ -39,11 +39,23 @@
             android:label="@string/title_listar_despesa" >
         </activity>
         <activity
+            android:name="com.parcelinc.parcelapp.activity.NovaDespesa"
+            android:label="@string/title_nova_despesa" >
+        </activity>
+        <activity
+            android:name="com.parcelinc.parcelapp.activity.AlterarDespesa"
+            android:label="@string/title_alterar_despesa" >
+        </activity>
+        <activity
             android:name="com.parcelinc.parcelapp.activity.ManterDespesa"
-            android:label="@string/title_manter_despesa" >
+            android:label="@string/title_alterar_despesa" >
         </activity>
         <activity
             android:name="com.parcelinc.parcelapp.activity.RelatorioFechamento"
+            android:label="@string/title_relatorio_fechamento" >
+        </activity>
+        <activity
+            android:name="com.parcelinc.parcelapp.activity.RelatorioDetalhe"
             android:label="@string/title_relatorio_fechamento" >
         </activity>
     </application>

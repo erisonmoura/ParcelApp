@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tableRowFechamento"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true" >
+    android:clickable="true"
+    android:onClick="detalharFechamento" >
 
     <TextView
         android:id="@+id/txtRowUser"
@@ -18,7 +20,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="2"
-        android:clickable="true"
         android:gravity="right"
         android:text="Text"
         android:textStyle="italic" />

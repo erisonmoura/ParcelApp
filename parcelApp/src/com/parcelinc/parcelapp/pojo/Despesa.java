@@ -5,13 +5,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Despesa implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+import com.parcelinc.parcelapp.util.Util;
 
-	
+public class Despesa implements Serializable {
+
+	private static final long serialVersionUID = Util.SERIAL_VERSION_UID;
+
 	private Long id;
 	private String nome;
 	private Long idConta;

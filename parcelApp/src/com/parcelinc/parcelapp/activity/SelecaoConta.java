@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.parcelinc.parcelapp.R;
 import com.parcelinc.parcelapp.db.ContaDatabase;
 import com.parcelinc.parcelapp.pojo.Conta;
+import com.parcelinc.parcelapp.util.Util;
 
 public class SelecaoConta extends Activity {
 
@@ -134,8 +135,8 @@ public class SelecaoConta extends Activity {
 	        ImageView btnTrash = (ImageView) linha.findViewById(R.id.imgTrash);
 	        btnTrash.setTag(conta);
 
-	        TextView txtUser = (TextView) linha.findViewById(R.id.txtRowUser);
-	        txtUser.setText(conta.getNome());
+	        TextView txtConta = (TextView) linha.findViewById(R.id.txtRowConta);
+			Util.setTextUnderline(txtConta, conta.getNome());
 
 	        layoutItens.addView(linha);
 		}

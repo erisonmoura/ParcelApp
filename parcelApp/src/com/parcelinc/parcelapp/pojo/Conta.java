@@ -5,12 +5,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.parcelinc.parcelapp.util.Util;
+
 public class Conta implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = Util.SERIAL_VERSION_UID;
 
 	private Long id;
 	private String nome;

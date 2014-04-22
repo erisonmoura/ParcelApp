@@ -2,12 +2,11 @@ package com.parcelinc.parcelapp.pojo;
 
 import java.io.Serializable;
 
+import com.parcelinc.parcelapp.util.Util;
+
 public class Usuario implements Serializable {
 
-	/**
-	 *** 
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = Util.SERIAL_VERSION_UID;
 
 	private Long id;
 	private String nome;

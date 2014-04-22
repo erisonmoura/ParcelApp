@@ -6,7 +6,8 @@
     <string name="title_manter_conta">Manter Conta</string>
     <string name="title_operacao_conta">Registro de Conta</string>
     <string name="title_manter_user">Manter Usário</string>
-    <string name="title_manter_despesa">Nova Despesa</string>
+    <string name="title_alterar_despesa">Alterar Parcela</string>
+    <string name="title_nova_despesa">Nova Despesa</string>
     <string name="title_listar_despesa">Listar Despesas</string>
     <string name="title_relatorio_fechamento">Relatório de Fechamento</string>
 
@@ -25,7 +26,8 @@
     <string name="btn_novo_user">Novo Usuário</string>
     <string name="btn_nova_conta">Nova Conta</string>
 	<string name="btn_nova_despesa">Nova Despesa</string>
-    
+	<string name="btn_novo_pagamento">Novo Pagamento</string>
+	
     <string name="btn_salvar">Salvar</string>
     <string name="btn_selecionar">Selecionar</string>
     <string name="btn_despesas">Despesas</string>
@@ -52,6 +54,9 @@
     <string name="lbl_despesa">Despesa</string>
     <string name="lbl_valor">Valor</string>
     <string name="lbl_quant">Qtd</string>
+    
+    <string name="lbl_filtrar_ask">Filtrar mês?</string>
+    <string name="lbl_pagamento_despesa">Pgtos de %s</string>
     
     <string name="lbl_recorr">Recorrente</string>
     <string name="lbl_quantidade">Quantidade</string>

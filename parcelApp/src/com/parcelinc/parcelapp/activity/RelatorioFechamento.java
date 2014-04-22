@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.parcelinc.parcelapp.R;
@@ -24,21 +25,16 @@ public class RelatorioFechamento extends Activity {
 	public static final String PARAM_CONTA = "conta";
 	public static final String PARAM_MES_REF = "mes_ref";
 	
-	Context contexto;
+	private Context contexto;
 
-	TextView txtConta;
-	TableLayout tabela;
+	private TextView txtConta;
+	private TableLayout tabela;
 
-	Conta conta;
-	String filtro;
+	private Conta conta;
+	private String filtro;
 
-	PagamentoDataBase dbPagamento;
-
-	public PagamentoDataBase getDbPagamento() {
-		if (dbPagamento == null) {
-			dbPagamento = PagamentoDataBase.getInstance(contexto);
-		}
-		return dbPagamento;
+	public PagamentoDataBase getPagamentoDB() {
+		return PagamentoDataBase.getInstance(contexto);
 	}
 
 	@Override
@@ -48,7 +44,7 @@ public class RelatorioFechamento extends Activity {
 
 		contexto = this;
 
-		tabela = (TableLayout) findViewById(R.id.tblDespesa);
+		tabela = (TableLayout) findViewById(R.id.tblFechamento);
 
 		Intent it = getIntent();
 
@@ -64,12 +60,9 @@ public class RelatorioFechamento extends Activity {
 	private void carregarPagamentos() {
 		Fechamento<Usuario> fechamento = Fechamento.paraUsuario();
 
-		List<Pagamento> lista = getDbPagamento().getList(null, filtro, null);
+		List<Pagamento> lista = getPagamentoDB().getList(conta.getId(), filtro, null, null);
 		for (Pagamento pagamento : lista) {
-			// Se a despesa for da conta selecionada
-			if (conta.getId().equals(pagamento.getDespesa().getIdConta())) {
-				fechamento.addPagamento(pagamento.getUsuario(), pagamento);
-			}
+			fechamento.addPagamento(pagamento.getUsuario(), pagamento);
 		}
 
 		fechamento.fechar();
@@ -78,19 +71,29 @@ public class RelatorioFechamento extends Activity {
 			View linha = LayoutInflater.from(contexto).inflate(
 					R.layout.linha_fechamento, tabela, false);
 
+			TableRow row = (TableRow) linha.findViewById(R.id.tableRowFechamento);
+			row.setTag(fechamento.getPagamentos(usuario).get(0));
+			
 	        TextView txt = (TextView) linha.findViewById(R.id.txtRowUser);
 	        txt.setText(usuario.getNome());
 
 	        txt = (TextView) linha.findViewById(R.id.txtRowPgto);
-	        Util.setTextUnderline(txt, String.format("%.3f", fechamento.getTotalPagamento(usuario)));
-			txt.setTag(fechamento.getPagamentos(usuario));
-			//txt.setOnClickListener(clickNome); // TODO implementar click
+	        Util.setTextUnderline(txt, Util.doubleToString(fechamento.getTotalPagamento(usuario)));
 
 			txt = (TextView) linha.findViewById(R.id.txtRowSaldo);
-			txt.setText(String.format("%.3f", fechamento.getSaldo(usuario)));
+			txt.setText(Util.doubleToString(fechamento.getSaldo(usuario)));
 
 			tabela.addView(linha);
 		}
+	}
+	
+	public void detalharFechamento(View view) {
+		Pagamento pagamento = (Pagamento) view.getTag();
+		Intent it = new Intent(contexto, RelatorioDetalhe.class);
+		it.putExtra(RelatorioDetalhe.PARAM_PGTO, pagamento);
+		it.putExtra(RelatorioDetalhe.PARAM_MES_REF, filtro);
+
+		startActivity(it);
 	}
 	
 }

@@ -1,9 +1,15 @@
 package com.parcelinc.parcelapp.pojo;
 
+import java.io.Serializable;
+import java.util.Calendar;
 
-public class Pagamento {
+import com.parcelinc.parcelapp.db.DateUtil;
+import com.parcelinc.parcelapp.util.Util;
 
-	
+public class Pagamento implements Serializable {
+
+	private static final long serialVersionUID = Util.SERIAL_VERSION_UID;
+
 	private Long id;
 	private Despesa despesa;
 	private String data;
@@ -12,23 +18,11 @@ public class Pagamento {
 
 	public Pagamento(Long id, Despesa despesa, String data, Usuario usuario,
 			double valor) {
-		super();
 		this.id = id;
 		this.despesa = despesa;
 		this.data = data;
 		this.usuario = usuario;
 		this.valor = valor;
-	}
-
-	public Pagamento(Despesa despesa, String data, Usuario usuario, double valor) {
-		this(null, despesa, data, usuario, valor);
-	}
-	public Pagamento(Long id){
-		this(id, null, null, null, 0);
-		
-	}
-	public Pagamento(String data, double valor){
-		this(null, null, data, null, valor);
 	}
 
 	public Long getId() {
@@ -54,6 +48,11 @@ public class Pagamento {
 	public void setData(String data) {
 		this.data = data;
 	}
+	
+	public String dataToString() {
+		Calendar c = DateUtil.toCalendar(getData());
+		return DateUtil.toString(c);
+	}
 
 	public Usuario getUsuario() {
 		return usuario;
@@ -70,7 +69,5 @@ public class Pagamento {
 	public void setValor(double valor) {
 		this.valor = valor;
 	}
-
-	
 
 }

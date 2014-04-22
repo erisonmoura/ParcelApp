@@ -1,6 +1,7 @@
 package com.parcelinc.parcelapp.db;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class DateUtil {
 
@@ -36,4 +37,14 @@ public class DateUtil {
 		return formatNumber(c.get(Calendar.DAY_OF_MONTH)) + "/" + getMonth(c)
 				+ "/" + formatNumber(c.get(Calendar.YEAR));
 	}
+
+	public static Calendar toCalendar(String date) {
+		String[] parts = date.split(SEPARATOR);
+		int year = Integer.parseInt(parts[0]);
+		int month = Integer.parseInt(parts[1])-1;
+		int day = Integer.parseInt(parts[2]);
+
+		return new GregorianCalendar(year, month, day);
+	}
+
 }

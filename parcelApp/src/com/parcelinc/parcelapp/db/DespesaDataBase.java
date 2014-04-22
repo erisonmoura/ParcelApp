@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.parcelinc.parcelapp.pojo.Despesa;
+import com.parcelinc.parcelapp.util.Util;
 
 public class DespesaDataBase implements DataBase<Despesa> {
 
@@ -196,7 +197,7 @@ public class DespesaDataBase implements DataBase<Despesa> {
 				where.append(" and ");
 			}
 			where.append(DBHelper.DATABASE_DATE_FIELD).append(" like ?");
-			params.add(prepareFiltro(filtroMes));
+			params.add(Util.prepareFiltro(filtroMes));
 		}
 
 		String[] paramsArray = null;
@@ -229,10 +230,6 @@ public class DespesaDataBase implements DataBase<Despesa> {
 		return mapa;
 	}
 
-	private String prepareFiltro(String filtroMes) {
-		return "%" + filtroMes.trim() + DateUtil.SEPARATOR + "%";
-	}
-
 	public List<Despesa> getList(Long idConta, String filtroMes) {
 
 		List<Despesa> list = new ArrayList<Despesa>();
@@ -251,7 +248,7 @@ public class DespesaDataBase implements DataBase<Despesa> {
 		sql.append(" and ").append(pagamentoTbl).append(".").append(DBHelper.DATABASE_DATE_FIELD).append(" like ? ");
 		sql.append(" order by ").append(despesaTbl).append(".").append(COLUMNS[1]);
 		
-		String[] params = new String[] { String.format("%d", idConta), prepareFiltro(filtroMes) };
+		String[] params = new String[] { String.format("%d", idConta), Util.prepareFiltro(filtroMes) };
 		
 		Cursor cr = db.rawQuery(sql.toString(), params);
 

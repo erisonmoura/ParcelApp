@@ -1,69 +1,46 @@
 package com.parcelinc.parcelapp.activity;
 
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.parcelinc.parcelapp.R;
-import com.parcelinc.parcelapp.db.DespesaDataBase;
+import com.parcelinc.parcelapp.db.DateUtil;
 import com.parcelinc.parcelapp.db.PagamentoDataBase;
-import com.parcelinc.parcelapp.db.UsuarioDataBase;
 import com.parcelinc.parcelapp.pojo.Conta;
 import com.parcelinc.parcelapp.pojo.Despesa;
+import com.parcelinc.parcelapp.pojo.Pagamento;
 import com.parcelinc.parcelapp.pojo.Usuario;
 import com.parcelinc.parcelapp.util.OnClickDate;
+import com.parcelinc.parcelapp.util.Util;
 
 public class ManterDespesa extends Activity {
 
 	public static final String PARAM_CONTA = "conta";
+	public static final String PARAM_DESPESA = "despesa";
+	public static final String PARAM_PAGAMENTO = "pagamento";
 
 	private Context contexto;
 	
-	private CheckBox chkRepeat;
-	private LinearLayout layoutRepeat;
-	
-	private SparseArray<EditText> campos;
 	private Spinner spnUser;
-	private TextView txtData;
+	private EditText edtValor;
 	
 	private OnClickDate clickDate;
 
 	private Conta conta;
+	private Despesa despesa;
+	private Pagamento pagamento;
 	
-	private DespesaDataBase dbDespesa;
-	private UsuarioDataBase dbUsuario;
-	private PagamentoDataBase dbPagamento;
-
-	public DespesaDataBase getDbDespesa() {
-		if (dbDespesa == null) {
-			dbDespesa = DespesaDataBase.getInstance(contexto);
-		}
-		return dbDespesa;
-	}
-	
-	public UsuarioDataBase getDbUsuario() {
-		if (dbUsuario == null) {
-			dbUsuario = UsuarioDataBase.getInstance(contexto);
-		}
-		return dbUsuario;
-	}
-	
-	public PagamentoDataBase getDbPagamento() {
-		if (dbPagamento == null) {
-			dbPagamento = PagamentoDataBase.getInstance(contexto);
-		}
-		return dbPagamento;
+	private PagamentoDataBase getPagamentoDB() {
+		return PagamentoDataBase.getInstance(contexto);
 	}
 	
 	@Override
@@ -73,77 +50,63 @@ public class ManterDespesa extends Activity {
 		
 		contexto = this;
 
-		conta = (Conta) getIntent().getSerializableExtra(PARAM_CONTA);
-		
-		chkRepeat = (CheckBox) findViewById(R.id.chkRecorrente);
-		layoutRepeat = (LinearLayout) findViewById(R.id.layoutRecorrente);
+		Intent it = getIntent();
+		conta = (Conta) it.getSerializableExtra(PARAM_CONTA);
+		if (it.hasExtra(PARAM_DESPESA)) {
+			despesa = (Despesa) it.getSerializableExtra(PARAM_DESPESA);
+		} else if (it.hasExtra(PARAM_PAGAMENTO)) {
+			pagamento = (Pagamento) it.getSerializableExtra(PARAM_PAGAMENTO);
+		}
 		
 		spnUser = (Spinner) findViewById(R.id.spnUser);
-		txtData = (TextView) findViewById(R.id.txtData);
 
-		clickRecorrente(chkRepeat);
-		
-		List<Usuario> usuariosValidos = new ArrayList<Usuario>();
-		for (Usuario usuario : getDbUsuario().getList()) {
-			for(Long idUsuario : conta.getIdsUsuario()) {
-				if (usuario.getId().equals(idUsuario)) {
-					usuariosValidos.add(usuario);
-				}
-			}
-		}
+		List<Usuario> usuariosValidos = Util.consultarUsuariosValidos(conta, contexto);
 		
 		ArrayAdapter<Usuario> adapter = new ArrayAdapter<Usuario>(this,
 		          android.R.layout.simple_spinner_item, usuariosValidos);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spnUser.setAdapter(adapter);
 
+		edtValor = (EditText) findViewById(R.id.edtValor);
 
-		campos = new SparseArray<EditText>();
+		EditText edtNome = (EditText) findViewById(R.id.edtNome);
 
-		EditText campo = (EditText) findViewById(R.id.edtNome);
-		campos.append(R.id.edtNome, campo);
+		EditText edtData = (EditText) findViewById(R.id.edtData);
+		clickDate = new OnClickDate(contexto, edtData);
 
-		campo = (EditText) findViewById(R.id.edtValor);
-		campos.append(R.id.edtValor, campo);
-		
-		campo = (EditText) findViewById(R.id.edtQntd);
-		campos.append(R.id.edtQntd, campo);
-		
-		campo = (EditText) findViewById(R.id.edtData);
-		campos.append(R.id.edtData, campo);
-
-		clickDate = new OnClickDate(contexto, campo);
+		if (despesa != null) {
+			edtNome.setText(despesa.getNome());
+		} else if (pagamento != null) {
+			edtNome.setText(pagamento.getDespesa().getNome());
+			spnUser.setSelection(usuariosValidos.indexOf(pagamento.getUsuario()));
+			edtValor.setText(Util.doubleToString(pagamento.getValor()));
+			
+			Calendar cal = DateUtil.toCalendar(pagamento.getData());
+			clickDate.setCalendar(cal);
+		}
 
 	}
 
-	public void clickRecorrente(View view) {
-		CheckBox check = (CheckBox) view;
-		if (check.isChecked()) {
-			layoutRepeat.setVisibility(View.VISIBLE);
-			txtData.setText(getString(R.string.lbl_data_pagamento, " 1º"));
+	public void salvarPagamento(View view) {
+		String valorStr = edtValor.getText().toString();
+		double valor = Util.stringToDouble(valorStr);
+		
+		Usuario usuario = (Usuario) spnUser.getSelectedItem();
+		String data = DateUtil.getDate(clickDate.getCalendar()); 
+
+		long result = -1;
+		if (pagamento == null) {
+			pagamento = new Pagamento(null, despesa, data, usuario, valor);
+			
+			result = getPagamentoDB().insert(pagamento);
 		} else {
-			layoutRepeat.setVisibility(View.INVISIBLE);
-			txtData.setText(getString(R.string.lbl_data_pagamento, ""));
-		}
-	}
-
-	public void salvarDespesa(View view) {
-		String nome = campos.get(R.id.edtNome).getText().toString();
-
-		String valorStr = campos.get(R.id.edtValor).getText().toString();
-		// TODO Definir e utilizar um DecimalFormat adequado
-		double valor = Double.valueOf(valorStr);
-		
-		Usuario user = (Usuario) spnUser.getSelectedItem();
-		int qntd = 1;
-		if (chkRepeat.isChecked()) {
-			String qntdStr = campos.get(R.id.edtQntd).getText().toString();
-			qntd = Integer.valueOf(qntdStr);
+			pagamento.setValor(valor);
+			pagamento.setData(data);
+			pagamento.setUsuario(usuario);
+			
+			result = getPagamentoDB().update(pagamento);
 		}
 		
-		Despesa despesa = new Despesa(nome, conta.getId(), null);
-		
-		long result = getDbDespesa().insert(despesa, qntd, valor, user.getId(), clickDate.getCalendar());
 		if (result != -1) {
 			setResult(RESULT_FIRST_USER);
 			finish();
