@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parcelinc.parcelapp.R;
 import com.parcelinc.parcelapp.db.DespesaDataBase;
@@ -98,16 +99,39 @@ public class NovaDespesa extends Activity {
 	}
 
 	public void salvarDespesa(View view) {
-		String nome = campos.get(R.id.edtNome).getText().toString();
+		EditText edt = campos.get(R.id.edtNome);
 
-		String valorStr = campos.get(R.id.edtValor).getText().toString();
-		double valor = Util.stringToDouble(valorStr);
+		String nome = edt.getText().toString();
+		if ("".equals(nome)) {
+			edt.requestFocus();
+			Toast.makeText(contexto, R.string.msg_valid_required, Toast.LENGTH_LONG).show();
+			return;
+		}
+		
+		// TODO validar duplicidade de nome
+		
+		edt = campos.get(R.id.edtValor);
+		String valorStr = edt.getText().toString();
+		double valor = 0.0d;
+		try {
+			valor = Util.stringToDouble(valorStr);
+		} catch (Exception e) {
+			edt.requestFocus();
+			Toast.makeText(contexto, R.string.msg_valid_value, Toast.LENGTH_LONG).show();
+			return;
+		}
 		
 		Usuario user = (Usuario) spnUser.getSelectedItem();
 		int qntd = 1;
 		if (chkRepeat.isChecked()) {
-			String qntdStr = campos.get(R.id.edtQntd).getText().toString();
+			edt = campos.get(R.id.edtQntd);
+			String qntdStr = edt.getText().toString();
 			qntd = Integer.valueOf(qntdStr);
+			if (qntd <= 0) {
+				edt.requestFocus();
+				Toast.makeText(contexto, R.string.msg_valid_value, Toast.LENGTH_LONG).show();
+				return;
+			}
 		}
 		
 		Despesa despesa = new Despesa(nome, conta.getId(), null);

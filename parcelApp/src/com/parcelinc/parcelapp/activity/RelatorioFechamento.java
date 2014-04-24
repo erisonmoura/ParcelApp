@@ -59,12 +59,21 @@ public class RelatorioFechamento extends Activity {
 
 	private void carregarPagamentos() {
 		Fechamento<Usuario> fechamento = Fechamento.paraUsuario();
+		fechamento.limpar();
 
-		List<Pagamento> lista = getPagamentoDB().getList(conta.getId(), filtro, null, null);
-		for (Pagamento pagamento : lista) {
-			fechamento.addPagamento(pagamento.getUsuario(), pagamento);
+		List<Usuario> listaUsr = Util.consultarUsuariosValidos(conta, contexto);
+		
+		List<Pagamento> listaPgto = getPagamentoDB().getList(conta.getId(), filtro, null, null);
+		for (Pagamento pagamento : listaPgto) {
+			Usuario usr = pagamento.getUsuario();
+			fechamento.addPagamento(usr, pagamento);
+			listaUsr.remove(usr);
 		}
 
+		for (Usuario usuario : listaUsr) {
+			fechamento.addPagamento(usuario, null);
+		}
+		
 		fechamento.fechar();
 		
 		for (Usuario usuario : fechamento.getChaves()) {

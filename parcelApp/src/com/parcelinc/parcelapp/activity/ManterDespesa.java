@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.parcelinc.parcelapp.R;
 import com.parcelinc.parcelapp.db.DateUtil;
@@ -89,7 +90,14 @@ public class ManterDespesa extends Activity {
 
 	public void salvarPagamento(View view) {
 		String valorStr = edtValor.getText().toString();
-		double valor = Util.stringToDouble(valorStr);
+		double valor = 0.0d;
+		try {
+			valor = Util.stringToDouble(valorStr);
+		} catch (Exception e) {
+			edtValor.requestFocus();
+			Toast.makeText(contexto, R.string.msg_valid_value, Toast.LENGTH_LONG).show();
+			return;
+		}
 		
 		Usuario usuario = (Usuario) spnUser.getSelectedItem();
 		String data = DateUtil.getDate(clickDate.getCalendar()); 

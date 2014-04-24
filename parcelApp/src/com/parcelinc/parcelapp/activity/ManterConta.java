@@ -39,9 +39,6 @@ public class ManterConta extends Activity {
 
 	private Context contexto;
 
-	private UsuarioDataBase dbUser;
-	private ContaDatabase dbConta;
-	
 	private List<Long> idsUsuarioConta;
 
 	private EditText edtNome;
@@ -69,23 +66,13 @@ public class ManterConta extends Activity {
 		
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
-			getDbUser().remove(usuario);
+			getUserDB().remove(usuario);
 			carregarUsuarios();
 		}
 	}
 
-	public UsuarioDataBase getDbUser() {
-		if (dbUser == null) {
-			dbUser = UsuarioDataBase.getInstance(contexto);
-		}
-		return dbUser;
-	}
-	
-	public ContaDatabase getDbConta() {
-		if (dbConta == null) {
-			dbConta = ContaDatabase.getInstance(contexto);
-		}
-		return dbConta;
+	private UsuarioDataBase getUserDB() {
+		return UsuarioDataBase.getInstance(contexto);
 	}
 	
 	@Override
@@ -204,6 +191,7 @@ public class ManterConta extends Activity {
 	public void salvarConta(View view) {
 		String nome = edtNome.getText().toString().trim();
 		if ("".equals(nome)) {
+			edtNome.requestFocus();
 			Toast.makeText(contexto, R.string.msg_valid_required, Toast.LENGTH_LONG).show();
 			return;
 		}
@@ -212,19 +200,22 @@ public class ManterConta extends Activity {
 			Toast.makeText(contexto, R.string.msg_valid_conta_seluser, Toast.LENGTH_LONG).show();
 			return;
 		}
+
+		ContaDatabase db = ContaDatabase.getInstance(contexto);
+		
+		// TODO validar duplicidade de nome
 		
 		if (conta == null) {
 			conta = new Conta(nome, idsUsuarioConta);
-			getDbConta().insert(conta);
+			db.insert(conta);
 		} else {
 			conta.setNome(nome);
 			conta.setIdsUsuarios(idsUsuarioConta);
-			getDbConta().update(conta);
+			db.update(conta);
 		}
 
 		setResult(RESULT_FIRST_USER);
 		finish();
-		//Toast.makeText(contexto, R.string.msg_salvo_sucesso, Toast.LENGTH_LONG).show();
 	}
 	
 	private void confirmarExclusao(Usuario usuario) {
@@ -252,7 +243,7 @@ public class ManterConta extends Activity {
 	}
 
 	private List<Usuario> listarUsuarios() {
-		return getDbUser().getList();
+		return getUserDB().getList();
 	}
 
 }

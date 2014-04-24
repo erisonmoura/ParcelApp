@@ -1,7 +1,11 @@
 package com.parcelinc.parcelapp.util;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import android.content.Context;
 import android.text.SpannableString;
@@ -17,6 +21,21 @@ public class Util {
 
 	public static final long SERIAL_VERSION_UID = 1L;
 	
+	private static final Locale local;
+	private static final DecimalFormatSymbols symbols;
+	private static final DecimalFormat decimal;
+	
+	static {
+		local = new Locale("pt", "BR");
+		symbols = new DecimalFormatSymbols(local);
+		decimal = new DecimalFormat();
+		decimal.setDecimalFormatSymbols(symbols);
+
+		decimal.setGroupingUsed(false);
+		decimal.setMinimumFractionDigits(2);
+		decimal.setDecimalSeparatorAlwaysShown(false);
+	}
+	
 	public static void setTextUnderline(TextView txt, String conteudo){
 		SpannableString texto = new SpannableString(conteudo);
 		texto.setSpan(new UnderlineSpan(), 0, texto.length(), 0);			
@@ -28,13 +47,12 @@ public class Util {
 	}
 
 	public static String doubleToString(double valor) {
-		String vl = String.format("%.3f", valor); 
-		return vl.replace(',', '.');
+		return decimal.format(valor);
 	}
 
-	public static double stringToDouble(String valor) {
-		// TODO Definir e utilizar um DecimalFormat adequado
-		return Double.parseDouble(valor);
+	public static double stringToDouble(String valor) throws ParseException {
+		String vl = valor.replace('.', ',');
+		return decimal.parse(vl).doubleValue();
 	}
 	
 	private static UsuarioDataBase getUsuarioDB(Context contexto) {

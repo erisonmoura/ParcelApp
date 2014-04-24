@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.parcelinc.parcelapp.R;
 import com.parcelinc.parcelapp.db.UsuarioDataBase;
@@ -19,7 +20,6 @@ public class ManterUser extends Activity {
 	EditText edtObs;
 
 	Usuario usuario;
-	UsuarioDataBase db;
 	
 	Context contexto;
 	
@@ -44,9 +44,18 @@ public class ManterUser extends Activity {
 	}
 
 	public void salvarUsuario(View view) {
-		db = UsuarioDataBase.getInstance(contexto);
 		String nome = edtNome.getText().toString();
 		String obs = edtObs.getText().toString();
+
+		if ("".equals(nome)) {
+			edtNome.requestFocus();
+			Toast.makeText(contexto, R.string.msg_valid_required, Toast.LENGTH_LONG).show();
+			return;
+		}
+
+		// TODO validar duplicidade de nome
+		
+		UsuarioDataBase db = UsuarioDataBase.getInstance(contexto);
 		if (usuario == null) {
 			usuario = new Usuario(nome, obs);
 			db.insert(usuario);
@@ -58,7 +67,6 @@ public class ManterUser extends Activity {
 
 		setResult(RESULT_FIRST_USER);
 		finish();
-		//Toast.makeText(contexto, R.string.msg_salvo_sucesso, Toast.LENGTH_LONG).show();
 	}
 
 }

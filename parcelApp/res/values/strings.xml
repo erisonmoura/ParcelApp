@@ -16,6 +16,7 @@
     
     <string name="msg_valid_conta_seluser">Selecione pelo menos um Usuário!</string>
     <string name="msg_valid_required">Campo obrigatório não preenchido!</string>
+    <string name="msg_valid_value">Preencha com um valor válido, positivo e maior que zero!</string>
     
     <string name="title_confirmar">Confirmar</string>
     <string name="msg_confirmar_exclusao">Tem certeza que deseja excluir%s?</string>

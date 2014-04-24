@@ -22,7 +22,7 @@ public class Fechamento<K> {
 	private static Fechamento<Despesa> fechamentoDespesa = new Fechamento<Despesa>();
 
 	private Fechamento() {
-		mapa = new HashMap<K, List<Pagamento>>();
+		limpar();
 	}
 
 	public static Fechamento<Usuario> paraUsuario() {
@@ -66,7 +66,9 @@ public class Fechamento<K> {
 		for (K key : getChaves()) {
 			Valores valor = new Valores();
 			for (Pagamento pagamento : getPagamentos(key)) {
-				valor.pagamentos += pagamento.getValor();
+				if (pagamento != null) {
+					valor.pagamentos += pagamento.getValor();
+				}
 			}
 			total += valor.pagamentos;
 			qntd++;
@@ -79,6 +81,11 @@ public class Fechamento<K> {
 			Valores valor = valores.get(key);
 			valor.saldo = valor.pagamentos - valorDevido;
 		}
+	}
+
+	public void limpar() {
+		mapa = new HashMap<K, List<Pagamento>>();
+		valores = null;
 	}
 	
 	public double getTotalPagamento(K key) {
