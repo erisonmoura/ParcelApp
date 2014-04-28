@@ -113,6 +113,8 @@ public class ListarDespesa extends Activity {
 	}
 
 	private void carregarDespesas() {
+		tabela.removeViews(1, tabela.getChildCount()-1);
+
 		List<Despesa> lista = geDespesaDB().getList(conta.getId(), filtro);
 		if (lista == null || lista.isEmpty()) {
 			Toast.makeText(contexto, R.string.msg_sem_dados, Toast.LENGTH_LONG)
