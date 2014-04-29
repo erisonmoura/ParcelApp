@@ -188,7 +188,7 @@ public class ManterConta extends Activity {
 		confirmarExclusao(usuarioParaExclusao);
 	}
 
-	public void salvarConta(View view) {
+	public void salvar(View view) {
 		String nome = edtNome.getText().toString().trim();
 		if ("".equals(nome)) {
 			edtNome.requestFocus();

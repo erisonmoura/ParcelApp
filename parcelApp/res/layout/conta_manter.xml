@@ -35,14 +35,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom" >
+        android:layout_gravity="bottom"
+        android:paddingBottom="5dp" >
 
-        <Button
-            android:id="@+id/btnNovoUser"
+        <ImageView
+            android:id="@+id/imageView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:contentDescription="@string/btn_novo_user"
             android:onClick="novoUsuario"
-            android:text="@string/btn_novo_user" />
+            android:src="@drawable/add_user" />
 
         <View
             android:id="@+id/view1"
@@ -50,14 +53,10 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
-        <Button
-            android:id="@+id/btnSalvarConta"
+        <include
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="salvarConta"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:text="@string/btn_salvar" />
+            layout="@layout/menu_ok" />
 
     </LinearLayout>
 

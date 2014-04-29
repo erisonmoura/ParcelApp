@@ -121,7 +121,7 @@ public class DespesaDataBase implements DataBase<Despesa> {
 	public void remove(Despesa despesa) {
 		db.beginTransaction();
 		try {
-			db.delete(DBHelper.TBL_CONTAS, DBHelper.DATABASE_ID_FIELD + "=?",
+			db.delete(DBHelper.TBL_DESPESAS, DBHelper.DATABASE_ID_FIELD + "=?",
 					new String[] { String.valueOf(despesa.getId()) });
 			db.setTransactionSuccessful();
 		} finally {

@@ -43,7 +43,7 @@ public class ManterUser extends Activity {
 		}
 	}
 
-	public void salvarUsuario(View view) {
+	public void salvar(View view) {
 		String nome = edtNome.getText().toString();
 		String obs = edtObs.getText().toString();
 

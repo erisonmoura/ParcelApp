@@ -1,5 +1,6 @@
 package com.parcelinc.parcelapp.activity;
 
+import java.security.InvalidParameterException;
 import java.util.List;
 
 import android.app.Activity;
@@ -98,7 +99,7 @@ public class NovaDespesa extends Activity {
 		}
 	}
 
-	public void salvarDespesa(View view) {
+	public void salvar(View view) {
 		EditText edt = campos.get(R.id.edtNome);
 
 		String nome = edt.getText().toString();
@@ -126,8 +127,12 @@ public class NovaDespesa extends Activity {
 		if (chkRepeat.isChecked()) {
 			edt = campos.get(R.id.edtQntd);
 			String qntdStr = edt.getText().toString();
-			qntd = Integer.valueOf(qntdStr);
-			if (qntd <= 0) {
+			try {
+				qntd = Integer.valueOf(qntdStr);
+				if (qntd <= 0) {
+					throw new InvalidParameterException();
+				}
+			} catch (Exception e) {
 				edt.requestFocus();
 				Toast.makeText(contexto, R.string.msg_valid_value, Toast.LENGTH_LONG).show();
 				return;

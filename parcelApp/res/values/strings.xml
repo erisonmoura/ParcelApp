@@ -7,11 +7,11 @@
     <string name="title_operacao_conta">Registro de Conta</string>
     <string name="title_manter_user">Manter Usário</string>
     <string name="title_alterar_despesa">Alterar Parcela</string>
+    <string name="title_nova_parcela">Nova Parcela</string>
     <string name="title_nova_despesa">Nova Despesa</string>
     <string name="title_listar_despesa">Listar Despesas</string>
     <string name="title_relatorio_fechamento">Relatório de Fechamento</string>
 
-    <string name="msg_salvo_sucesso">Registro salvo com sucesso!</string>
     <string name="msg_sem_dados">Nenhum registro encontrado!</string>
     
     <string name="msg_valid_conta_seluser">Selecione pelo menos um Usuário!</string>
@@ -29,22 +29,18 @@
 	<string name="btn_nova_despesa">Nova Despesa</string>
 	<string name="btn_novo_pagamento">Novo Pagamento</string>
 	
-    <string name="btn_salvar">Salvar</string>
-    <string name="btn_selecionar">Selecionar</string>
     <string name="btn_despesas">Despesas</string>
     <string name="btn_fechamento">Fechamento</string>
     
-    <string name="mnu_selecionar">Selecionar</string>
     <string name="mnu_alterar">Alterar</string>
     <string name="mnu_excluir">Excluir</string>
-    <string name="mnu_alterar_nome">Alterar Nome</string>
-    <string name="mnu_alterar_parcela">Alterar Parcela</string>
-    <string name="mnu_excluir_despesa">Excluir Despesa</string>
 
+    <string name="lbl_ok">OK</string>
+    
     <string name="lbl_conta">Conta</string>
     <string name="lbl_nome">Nome</string>
     <string name="lbl_obs">Observações</string>
-    <string name="lbl_filtro">Filtrar</string>
+    <string name="lbl_filtro">Filtrar </string>
 
     <string name="lbl_fechamento">Fechamento em %s</string>
     <string name="lbl_user">Usuário</string>
@@ -61,10 +57,7 @@
     
     <string name="lbl_recorr">Recorrente</string>
     <string name="lbl_quantidade">Quantidade</string>
-    <string name="lbl_pagador">Usuário Pagador</string>
     <string name="lbl_data_pagamento">Data%s Pagamento</string>
     <string name="lbl_data">Data</string>
-    <string name="lbl_ref">Referência</string>
-    <string name="lbl_saldos">Saldos</string>
 
 </resources>

@@ -27,42 +27,48 @@
             android:textAppearance="?android:attr/textAppearanceLarge" />
     </LinearLayout>
 
-    <TableLayout
-        android:id="@+id/tblPagamento"
+    <ScrollView
+        android:id="@+id/scrollView1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" >
 
-        <TableRow
-            android:layout_width="wrap_content"
+        <TableLayout
+            android:id="@+id/tblPagamento"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
-            <TextView
-                android:id="@+id/textView1"
-                style="@style/CellText"
+            <TableRow
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/lbl_data"
-                android:textStyle="bold" />
+                android:layout_height="wrap_content" >
 
-            <TextView
-                android:id="@+id/textView2"
-                style="@style/CellText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/lbl_despesa"
-                android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/textView1"
+                    style="@style/CellText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lbl_data"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/textView3"
-                style="@style/CellText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="@string/lbl_valor"
-                android:textStyle="bold" />
-        </TableRow>
-    </TableLayout>
+                <TextView
+                    android:id="@+id/textView2"
+                    style="@style/CellText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/lbl_despesa"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    style="@style/CellText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:text="@string/lbl_valor"
+                    android:textStyle="bold" />
+            </TableRow>
+        </TableLayout>
+    </ScrollView>
 
 </LinearLayout>

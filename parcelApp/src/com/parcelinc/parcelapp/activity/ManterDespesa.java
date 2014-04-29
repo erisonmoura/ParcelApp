@@ -55,6 +55,7 @@ public class ManterDespesa extends Activity {
 		conta = (Conta) it.getSerializableExtra(PARAM_CONTA);
 		if (it.hasExtra(PARAM_DESPESA)) {
 			despesa = (Despesa) it.getSerializableExtra(PARAM_DESPESA);
+			setTitle(R.string.title_nova_parcela);
 		} else if (it.hasExtra(PARAM_PAGAMENTO)) {
 			pagamento = (Pagamento) it.getSerializableExtra(PARAM_PAGAMENTO);
 		}
@@ -88,7 +89,7 @@ public class ManterDespesa extends Activity {
 
 	}
 
-	public void salvarPagamento(View view) {
+	public void salvar(View view) {
 		String valorStr = edtValor.getText().toString();
 		double valor = 0.0d;
 		try {
