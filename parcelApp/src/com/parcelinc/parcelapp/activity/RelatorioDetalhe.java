@@ -64,7 +64,7 @@ public class RelatorioDetalhe extends Activity {
 	}
 
 	private void carregarPagamentos() {
-		tabela.removeViews(1, tabela.getChildCount()-1);
+		tabela.removeAllViews();
 
 		String filtroMes = null;
 		if (chkFiltrar.isChecked()) {

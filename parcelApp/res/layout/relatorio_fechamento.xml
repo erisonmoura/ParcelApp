@@ -14,49 +14,55 @@
         android:text="@string/lbl_fechamento"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <ScrollView
-        android:id="@+id/scrollView1"
+    <TableLayout
+        android:id="@+id/tableLayout1"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" >
+        android:layout_height="match_parent" >
 
-        <TableLayout
-            android:id="@+id/tblFechamento"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false" >
 
-            <TableRow
+            <TextView
+                style="@style/CellText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clickable="false" >
+                android:layout_weight="3"
+                android:text="@string/lbl_user"
+                android:textStyle="bold" />
 
-                <TextView
-                    style="@style/CellText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:text="@string/lbl_user"
-                    android:textStyle="bold" />
+            <TextView
+                style="@style/CellText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="right"
+                android:text="@string/lbl_pagamentos"
+                android:textStyle="bold" />
 
-                <TextView
-                    style="@style/CellText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:gravity="right"
-                    android:text="@string/lbl_pagamentos"
-                    android:textStyle="bold" />
+            <TextView
+                style="@style/CellText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="right"
+                android:text="@string/lbl_saldo"
+                android:textStyle="bold" />
+        </TableRow>
 
-                <TextView
-                    style="@style/CellText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:gravity="right"
-                    android:text="@string/lbl_saldo"
-                    android:textStyle="bold" />
-            </TableRow>
-        </TableLayout>
-    </ScrollView>
+        <ScrollView
+            android:id="@+id/scrollView1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+
+            <TableLayout
+                android:id="@+id/tblFechamento"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </TableLayout>
+        </ScrollView>
+    </TableLayout>
 
 </LinearLayout>

@@ -113,7 +113,7 @@ public class ListarDespesa extends Activity {
 	}
 
 	private void carregarDespesas() {
-		tabela.removeViews(1, tabela.getChildCount()-1);
+		tabela.removeAllViews();
 
 		List<Despesa> lista = geDespesaDB().getList(conta.getId(), filtro);
 		if (lista == null || lista.isEmpty()) {
